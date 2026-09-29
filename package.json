@@ -1,0 +1,27 @@
+{
+  "name": "roomparty",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --config web/vite.config.ts",
+    "build": "vite build --config web/vite.config.ts",
+    "preview": "vite preview --config web/vite.config.ts",
+    "check": "svelte-check --tsconfig web/tsconfig.app.json && tsc -p web/tsconfig.node.json",
+    "server": "tsx server/main.ts"
+  },
+  "dependencies": {
+    "svelte": "^5.57.0",
+    "ws": "^8.22.0"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^7.3.0",
+    "@tsconfig/svelte": "^5.0.8",
+    "@types/node": "^24.13.3",
+    "@types/ws": "^8.18.1",
+    "svelte-check": "^4.7.6",
+    "tsx": "^4.20.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0"
+  }
+}
