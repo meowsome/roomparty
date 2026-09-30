@@ -1,7 +1,7 @@
 // This manages the view of the game state for each actor. 
 
-import type { Actor } from "./rules";
-import type { GameState } from "./state";
+import type { Actor } from "../shared/actor";
+import type { GameState } from "../shared/state";
 
 export function getGameStateView(
     state: GameState,

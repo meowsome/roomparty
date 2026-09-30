@@ -1,6 +1,6 @@
 import { WebSocketServer } from "ws";
 
-import { createRoom, executeCommand, type Room } from "./room";
+import { createRoom, type Room } from "./room";
 import { handleConnection } from "./websocket";
 
 function main() {

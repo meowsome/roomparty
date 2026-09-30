@@ -2,16 +2,16 @@
 
 import type { WebSocket } from "ws";
 
-import type { Command } from "../game/command";
-import type { GameState } from "../game/state";
-import type { CommandResult } from "../game/rules";
+import type { Command } from "../shared/command";
+import type { Actor } from "../shared/actor";
+import type { GameState } from "../shared/state";
 
+import type { CommandResult } from "../game/rules";
+import { applyEvent } from "../game/reducer";
 import {
     handleCommand,
-    type Actor,
     type CommandError,
 } from "../game/rules";
-import { applyEvent } from "../game/reducer";
 
 export type Room = {
     game: GameState;
@@ -19,6 +19,7 @@ export type Room = {
     connections: {
         host: WebSocket | null;
         players: Map<string, WebSocket>;
+        unassigned: Set<WebSocket>;
     };
 };
 
@@ -33,6 +34,7 @@ export function createRoom(): Room {
         connections: {
             host: null,
             players: new Map(),
+            unassigned: new Set(),
         },
     };
 }

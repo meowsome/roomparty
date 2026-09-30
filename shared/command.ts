@@ -3,14 +3,16 @@
 
 export type Command =
     | {
-        type: "BECOME_HOST";
+        type: "BECOME";
+        role: "HOST" 
     }
     | {
-        type: "BECOME_PLAYER";
+        type: "BECOME";
+        role: "PLAYER";
         desiredName: string;
     }
     | {
-        type: "DESTROY_PLAYER";
+        type: "DESTROY";
     }
     | {
         type: "INCREMENT";
