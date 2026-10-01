@@ -1,18 +1,17 @@
-// Handles the lifecycle of a connection to the server, including receiving messages and sending updates.
+// Handles the lifecycle of a connection to the server, including receiving commands, executing them, and sending back the resulting game state.
 
 import type { Connection } from "../shared/connection";
 import type { Command } from "../shared/command";
 import type { Actor } from "../shared/actor";
+import { getPlayerId } from "../shared/model/player";
+import { GameEvent } from "../shared/event";
 
 import { getGameStateView } from "../game/view";
+import { applyGameEvent } from "../game/game-state-reducer";  
 
-import { applyActorEvent } from "./actor-reducer";
 import { updateConnections, addConnection, removeConnection } from "./connections";
-
-import {
-    executeCommand,
-    type Room,
-} from "./room";
+import { executeCommand } from "./command-executor";
+import { type Room } from "./room";  
 
 export function handleConnection(
     connection: Connection,
@@ -68,7 +67,7 @@ function handleMessage(
         return actor;
     }
 
-    // Execute the command and potentially update the game state.
+    // Execute the command and get the resulting events.
     const result = executeCommand(
         room,
         actor,
@@ -85,9 +84,11 @@ function handleMessage(
         return actor;
     }
 
-    // Potentially update the actor and the associated room's connections.
+    // Apply the events to the game state and update the actor and connections accordingly.
     for (const event of result.events) {
-        actor = applyActorEvent(actor, event);
+        console.log("Applying event:", event);
+        room.game = applyGameEvent(room.game, event);
+        actor = updateActor(actor, event);
         updateConnections(room, connection, event);
     }
 
@@ -158,5 +159,49 @@ function broadcastState(
                 type: "UNASSIGNED",
             },
         );
+    }
+}
+
+function updateActor(
+    actor: Actor,
+    event: GameEvent,
+): Actor {
+
+    switch (event.type) {
+
+        case "HOST_BECAME":
+            return {
+                type: "HOST",
+            };
+
+        case "PLAYER_BECAME":
+            return {
+                type: "PLAYER",
+                playerId: getPlayerId(event.player.displayName),
+            };
+
+        case "HOST_DESTROYED":
+            if (actor.type === "HOST") {
+                return {
+                    type: "UNASSIGNED",
+                };
+            }
+
+            return actor;
+
+        case "PLAYER_DESTROYED":
+            if (
+                actor.type === "PLAYER" &&
+                actor.playerId === event.playerId
+            ) {
+                return {
+                    type: "UNASSIGNED",
+                };
+            }
+
+            return actor;
+
+        default:
+            return actor;
     }
 }

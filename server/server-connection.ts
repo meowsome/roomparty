@@ -1,5 +1,6 @@
-import type { WebSocket } from "ws";
+// A server-side implementation of the Connection interface, which wraps a WebSocket connection.
 
+import type { WebSocket } from "ws";
 import type { Connection } from "../shared/connection";
 
 export class ServerConnection implements Connection {
