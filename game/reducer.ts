@@ -1,7 +1,7 @@
 // This is the single function that mutates the game state. It takes the current state and an event, and returns the new state.
 // It does not contain any validation logic. It is a simple pure function that applies the event to the state. 
 
-import type { GameEvent } from "./event";
+import type { GameEvent } from "../shared/event";
 import type { GameState } from "../shared/state";
 import { getPlayerId } from "../shared/model/player";
 

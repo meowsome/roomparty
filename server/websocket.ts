@@ -1,10 +1,10 @@
-import type { WebSocket } from "ws";
+import type { Connection } from "../shared/connection";
 
 import type { Command } from "../shared/command";
 import type { Actor } from "../shared/actor";
 import { getPlayerId } from "../shared/model/player";
 
-import type { GameEvent } from "../game/event";
+import type { GameEvent } from "../shared/event";
 import { getGameStateView } from "../game/view";
 import {
     executeCommand,
@@ -12,34 +12,34 @@ import {
 } from "./room";
 
 export function handleConnection(
-    socket: WebSocket,
+    connection: Connection,
     room: Room,
 ) {
     let actor: Actor = {
         type: "UNASSIGNED",
     };
 
-    room.connections.unassigned.add(socket);
+    room.connections.unassigned.add(connection);
 
     // Send the initial game state to the new connection.
     sendView(
-        socket,
+        connection,
         room,
         actor,
     );
 
-    socket.on("message", raw => {
+    connection.receive((raw) => {
         actor = handleMessage(
-            socket,
+            connection,
             room,
             actor,
             raw,
         );
     });
 
-    socket.on("close", () => {
+    connection.receiveClose(() => {
         removeConnection(
-            socket,
+            connection,
             room,
             actor,
         );
@@ -47,16 +47,16 @@ export function handleConnection(
 }
 
 function handleMessage(
-    socket: WebSocket,
+    connection: Connection,
     room: Room,
     actor: Actor,
-    raw: WebSocket.RawData
+    raw: object,
 ): Actor {
     // Command parsing and validation
-    const command = parseCommand(raw);
+    const command = raw as Command;
     if (command === null) {
         sendError(
-            socket,
+            connection,
             "INVALID_COMMAND",
             "Invalid command.",
         );
@@ -65,7 +65,7 @@ function handleMessage(
     }
 
     // Check if the command can be executed by this connection.
-    if (!canExecute(socket,room,command)) {
+    if (!canExecute(connection,room,command)) {
         return actor;
     }
 
@@ -78,7 +78,7 @@ function handleMessage(
 
     if (result.type === "ERROR") {
         sendError(
-            socket,
+            connection,
             result.error.code,
             result.error.message,
         );
@@ -88,7 +88,7 @@ function handleMessage(
 
     // Handle special events that affect the connection identity.
     const newActor = handleEvents(
-        socket,
+        connection,
         room,
         actor,
         result.events,
@@ -100,7 +100,7 @@ function handleMessage(
 }
 
 function canExecute(
-    socket: WebSocket,
+    connection: Connection,
     room: Room,
     command: Command,
 ): boolean {
@@ -109,11 +109,11 @@ function canExecute(
             .trim()
             .toLowerCase();
 
-        const existingSocket = room.connections.players.get(name);
+        const existingConnection = room.connections.players.get(name);
 
-        if (existingSocket !== undefined && existingSocket !== socket) {
+        if (existingConnection !== undefined && existingConnection !== connection) {
             sendError(
-                socket,
+                connection,
                 "PLAYER_ALREADY_CONNECTED",
                 "That player is already connected.",
             );
@@ -126,7 +126,7 @@ function canExecute(
 }
 
 function handleEvents(
-    socket: WebSocket,
+    connection: Connection,
     room: Room,
     actor: Actor,
     events: GameEvent[],
@@ -136,16 +136,16 @@ function handleEvents(
 
             // Handle special event types that affect the connection identity.
             case "HOST_BECAME":
-                room.connections.unassigned.delete(socket);
+                room.connections.unassigned.delete(connection);
                 actor = {
                     type: "HOST",
                 };
 
-                room.connections.host = socket;
+                room.connections.host = connection;
                 break;
 
             case "PLAYER_BECAME":
-                room.connections.unassigned.delete(socket);
+                room.connections.unassigned.delete(connection);
 
                 actor = {
                     type: "PLAYER",
@@ -154,7 +154,7 @@ function handleEvents(
 
                 room.connections.players.set(
                     getPlayerId(event.player.displayName),
-                    socket,
+                    connection,
                 );
                 break;
 
@@ -163,7 +163,7 @@ function handleEvents(
                 actor = {
                     type: "UNASSIGNED",
                 };
-                room.connections.unassigned.add(socket);
+                room.connections.unassigned.add(connection);
                 break;
 
             case "PLAYER_DESTROYED":
@@ -173,7 +173,7 @@ function handleEvents(
                 actor = {
                     type: "UNASSIGNED",
                 };
-                room.connections.unassigned.add(socket);
+                room.connections.unassigned.add(connection);
                 break;
 
         }
@@ -183,33 +183,33 @@ function handleEvents(
 }
 
 function sendView(
-    socket: WebSocket,
+    connection: Connection,
     room: Room,
     actor: Actor,
 ) {
     // Provide the client with their view state as well as their actor identity.
-    socket.send(JSON.stringify({
+    connection.send({
         type: "STATE",
         state: getGameStateView(
             room.game,
             actor,
         ),
         actor: actor
-    }));
+    });
 }
 
 function sendError(
-    socket: WebSocket,
+    connection: Connection,
     code: string,
     message: string,
 ) {
-    socket.send(JSON.stringify({
+    connection.send({
         type: "ERROR",
         error: {
             code,
             message,
         },
-    }));
+    });
 }
 
 function broadcastState(
@@ -225,9 +225,9 @@ function broadcastState(
         );
     }
 
-    for (const [playerId, socket] of room.connections.players) {
+    for (const [playerId, connection] of room.connections.players) {
         sendView(
-            socket,
+            connection,
             room,
             {
                 type: "PLAYER",
@@ -236,9 +236,9 @@ function broadcastState(
         );
     }
 
-    for (const socket of room.connections.unassigned) {
+    for (const connection of room.connections.unassigned) {
         sendView(
-            socket,
+            connection,
             room,
             {
                 type: "UNASSIGNED",
@@ -248,20 +248,20 @@ function broadcastState(
 }
 
 function removeConnection(
-    socket: WebSocket,
+    connection: Connection,
     room: Room,
     actor: Actor,
 ) {
     switch (actor.type) {
         case "HOST":
-            if (room.connections.host === socket) {
+            if (room.connections.host === connection) {
                 room.connections.host = null;
             }
             break;
 
         case "PLAYER": {
 
-            if (room.connections.players.get(actor.playerId) === socket) {
+            if (room.connections.players.get(actor.playerId) === connection) {
                 room.connections.players.delete(actor.playerId);
             }
 
@@ -269,21 +269,7 @@ function removeConnection(
         }
 
         case "UNASSIGNED":
-            room.connections.unassigned.delete(socket);
+            room.connections.unassigned.delete(connection);
             break;
-    }
-}
-
-function parseCommand(
-    raw: WebSocket.RawData,
-): Command | null {
-    try {
-        const value = JSON.parse(
-            raw.toString(),
-        );
-
-        return value as Command;
-    } catch {
-        return null;
     }
 }

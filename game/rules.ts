@@ -2,27 +2,14 @@
 // It takes the current game state, the actor (host or player), and the command, and returns 
 // either an array of events to apply to the game state, or an error if the command is invalid.
 
-import type { Command } from "../shared/command";
+import type { Command, CommandResult, CommandError } from "../shared/command";
 import type { Actor } from "../shared/actor";
 import type { GameState } from "../shared/state";
 
-import type { GameEvent } from "./event";
+import type { GameEvent } from "../shared/event";
 import { getPlayerId } from "../shared/model/player";
+import { isKeyObject } from "util/types";
 
-export type CommandError = {
-    code: string;
-    message: string;
-};
-
-export type CommandResult =
-    | {
-        type: "SUCCESS";
-        events: GameEvent[];
-    }
-    | {
-        type: "ERROR";
-        error: CommandError;
-    };
 
 export function handleCommand(
     state: GameState,

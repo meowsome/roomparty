@@ -1,16 +1,20 @@
 import { WebSocketServer } from "ws";
 
-import { createRoom, type Room } from "./room";
+import { ServerConnection } from "./server-connection";
 import { handleConnection } from "./websocket";
+import { createRoom } from "./room";
 
-function main() {
-    const room = createRoom();
+const room = createRoom();
 
-    const wss = new WebSocketServer({ port: 8080 });
+const server = new WebSocketServer({
+    port: 8080,
+});
 
-    wss.on("connection", socket => {
-        handleConnection(socket, room);
-    });
-}
+server.on("connection", socket => {
+    const connection = new ServerConnection(socket);
 
-main();
+    handleConnection(
+        connection,
+        room,
+    );
+});

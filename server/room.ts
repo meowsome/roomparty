@@ -1,25 +1,23 @@
 // This file contains the types and functions for the game room. 
-
+// The room is conceptually a "game server" that manages the game state and the connections to the clients.
 // This is where the "command" -> "event" -> "update state" flow occurs. 
 
 import type { Command } from "../shared/command";
 import type { Actor } from "../shared/actor";
 import type { GameState } from "../shared/state";
+import type { CommandResult, CommandError } from "../shared/command";
+import type { Connection } from "../shared/connection";
 
-import type { CommandResult } from "../game/rules";
 import { applyEvent } from "../game/reducer";
-import {
-    handleCommand,
-    type CommandError,
-} from "../game/rules";
+import { handleCommand } from "../game/rules";
 
 export type Room = {
     game: GameState;
 
     connections: {
-        host: WebSocket | null;
-        players: Map<string, WebSocket>;
-        unassigned: Set<WebSocket>;
+        host: Connection | null;
+        players: Map<string, Connection>;
+        unassigned: Set<Connection>;
     };
 };
 

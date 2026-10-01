@@ -1,6 +1,8 @@
 // The various commands that can be sent to the server. These are handled in the `handleCommand` function in `game/rules.ts`.
 // They generate events that are applied to the game state in `server/room.ts` using the `applyEvent` function.
 
+import type { GameEvent } from "./event";
+
 export type Command =
     | {
         type: "BECOME";
@@ -22,4 +24,19 @@ export type Command =
     }
     | {
         type: "RESET_COUNTER";
+    };
+
+export type CommandError = {
+    code: string;
+    message: string;
+};
+
+export type CommandResult =
+    | {
+        type: "SUCCESS";
+        events: GameEvent[];
+    }
+    | {
+        type: "ERROR";
+        error: CommandError;
     };
