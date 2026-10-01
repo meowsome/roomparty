@@ -2,13 +2,10 @@
 // It takes the current game state, the actor (host or player), and the command, and resolves it into 
 // either an array of events to apply to the game state, or an error if the command is invalid.
 
-import type { Command, CommandResult, CommandError } from "../shared/command";
+import type { Command, CommandResult } from "../shared/command";
 import type { Actor } from "../shared/actor";
 import type { GameState } from "../shared/model/game-state";
-
-import type { GameEvent } from "../shared/event";
 import { getPlayerId } from "../shared/model/player";
-import { isKeyObject } from "util/types";
 
 export function resolveCommand(
     state: GameState,

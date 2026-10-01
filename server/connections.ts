@@ -1,8 +1,18 @@
+// Manages the connections in a room, including the host, players, and unassigned connections.
+
 import { Connection } from "../shared/connection";
 import { GameEvent } from "../shared/event";
 import { getPlayerId } from "../shared/model/player";
+import type { Actor } from "../shared/actor";
+
 import { Room } from "./room";
 
+
+export type Connections = {
+    host: Connection | null;
+    players: Map<string, Connection>;
+    unassigned: Set<Connection>;
+};
 
 // Handle room connections based on the game events.
 export function updateConnections(
@@ -49,4 +59,39 @@ export function updateConnections(
             break;
         }
     }
+}
+
+export function addConnection(room: Room, connection: Connection): void {
+    room.connections.unassigned.add(connection);
+}
+
+export function removeConnection(
+    connection: Connection,
+    room: Room,
+    actor: Actor,
+) {
+    switch (actor.type) {
+        case "HOST":
+            if (room.connections.host === connection) {
+                room.connections.host = null;
+            }
+            break;
+
+        case "PLAYER": {
+
+            if (room.connections.players.get(actor.playerId) === connection) {
+                room.connections.players.delete(actor.playerId);
+            }
+
+            break;
+        }
+
+        case "UNASSIGNED":
+            room.connections.unassigned.delete(connection);
+            break;
+    }
+}
+
+export function isPlayerConnected(room: Room, playerId: string): boolean {
+    return room.connections.players.has(playerId);
 }

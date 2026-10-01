@@ -1,3 +1,6 @@
+// This is the single function that mutates the actor in a given connection. It takes the current actor and an event, and returns the new actor state.
+// It does not contain any validation logic. It is a simple pure function that applies the event to the actor.
+
 import type { Actor } from "../shared/actor";
 import type { GameEvent } from "../shared/event";
 import { getPlayerId } from "../shared/model/player";

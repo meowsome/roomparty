@@ -6,21 +6,18 @@ import type { Command } from "../shared/command";
 import type { Actor } from "../shared/actor";
 import type { GameState } from "../shared/model/game-state";
 import type { CommandResult, CommandError } from "../shared/command";
-import type { Connection } from "../shared/connection";
 import { getPlayerId } from "../shared/model/player";
-import type { GameEvent } from "../shared/event";
 
 import { applyGameEvent } from "../game/game-state-reducer";
 import { resolveCommand } from "../game/rules";
 
+import type { Connections } from "./connections";
+import { isPlayerConnected } from "./connections";
+
 export type Room = {
     game: GameState;
 
-    connections: {
-        host: Connection | null;
-        players: Map<string, Connection>;
-        unassigned: Set<Connection>;
-    };
+    connections: Connections;
 };
 
 export function createRoom(): Room {
@@ -139,8 +136,4 @@ export function authorizeCommand(
         default:
             return null;
     }
-}
-
-function isPlayerConnected(room: Room, playerId: string): boolean {
-    return room.connections.players.has(playerId);
 }

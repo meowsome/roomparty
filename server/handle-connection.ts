@@ -1,13 +1,13 @@
-// This defines the connection logic for a single connection to the server. It handles receiving commands from the client, 
-// executing them against the room, and sending back the resulting state or errors.
+// Handles the lifecycle of a connection to the server, including receiving messages and sending updates.
 
 import type { Connection } from "../shared/connection";
 import type { Command } from "../shared/command";
 import type { Actor } from "../shared/actor";
 
 import { getGameStateView } from "../game/view";
+
 import { applyActorEvent } from "./actor-reducer";
-import { updateConnections } from "./connections";
+import { updateConnections, addConnection, removeConnection } from "./connections";
 
 import {
     executeCommand,
@@ -18,11 +18,12 @@ export function handleConnection(
     connection: Connection,
     room: Room,
 ) {
+    // Each connection has an associated actor, which starts as unassigned and can become a host or player.
     let actor: Actor = {
         type: "UNASSIGNED",
     };
 
-    room.connections.unassigned.add(connection);
+    addConnection(room, connection);
 
     // Send the initial game state to the new connection.
     sendView(
@@ -157,32 +158,5 @@ function broadcastState(
                 type: "UNASSIGNED",
             },
         );
-    }
-}
-
-function removeConnection(
-    connection: Connection,
-    room: Room,
-    actor: Actor,
-) {
-    switch (actor.type) {
-        case "HOST":
-            if (room.connections.host === connection) {
-                room.connections.host = null;
-            }
-            break;
-
-        case "PLAYER": {
-
-            if (room.connections.players.get(actor.playerId) === connection) {
-                room.connections.players.delete(actor.playerId);
-            }
-
-            break;
-        }
-
-        case "UNASSIGNED":
-            room.connections.unassigned.delete(connection);
-            break;
     }
 }
