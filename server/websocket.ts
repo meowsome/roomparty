@@ -2,6 +2,7 @@ import type { WebSocket } from "ws";
 
 import type { Command } from "../shared/command";
 import type { Actor } from "../shared/actor";
+import { getPlayerId } from "../shared/model/player";
 
 import type { GameEvent } from "../game/event";
 import { getGameStateView } from "../game/view";
@@ -148,13 +149,11 @@ function handleEvents(
 
                 actor = {
                     type: "PLAYER",
-                    name: event.player.name,
+                    playerId: getPlayerId(event.player.displayName),
                 };
 
                 room.connections.players.set(
-                    event.player.name
-                        .trim()
-                        .toLowerCase(),
+                    getPlayerId(event.player.displayName),
                     socket,
                 );
                 break;
@@ -169,9 +168,7 @@ function handleEvents(
 
             case "PLAYER_DESTROYED":
                 room.connections.players.delete(
-                    event.playerName
-                        .trim()
-                        .toLowerCase(),
+                    getPlayerId(event.playerId),
                 );
                 actor = {
                     type: "UNASSIGNED",
@@ -228,13 +225,13 @@ function broadcastState(
         );
     }
 
-    for (const [name, socket] of room.connections.players) {
+    for (const [playerId, socket] of room.connections.players) {
         sendView(
             socket,
             room,
             {
                 type: "PLAYER",
-                name: name,
+                playerId: playerId,
             },
         );
     }
@@ -263,12 +260,9 @@ function removeConnection(
             break;
 
         case "PLAYER": {
-            const key = actor.name
-                .trim()
-                .toLowerCase();
 
-            if (room.connections.players.get(key) === socket) {
-                room.connections.players.delete(key);
+            if (room.connections.players.get(actor.playerId) === socket) {
+                room.connections.players.delete(actor.playerId);
             }
 
             break;

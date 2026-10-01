@@ -3,6 +3,7 @@
 
 import type { GameEvent } from "./event";
 import type { GameState } from "../shared/state";
+import { getPlayerId } from "../shared/model/player";
 
 export function applyEvent(
     state: GameState,
@@ -22,13 +23,12 @@ export function applyEvent(
             };
 
         case "PLAYER_BECAME": {
-            const key = normalizeName(event.player.name);
-
+            const playerId = getPlayerId(event.player.displayName);
             return {
                 ...state,
                 players: {
                     ...state.players,
-                    [key]: event.player,
+                    [playerId]: event.player,
                 },
             };
         }
@@ -38,7 +38,7 @@ export function applyEvent(
                 ...state.players,
             };
 
-            delete players[event.playerName];
+            delete players[event.playerId];
 
             return {
                 ...state,
@@ -64,8 +64,4 @@ export function applyEvent(
                 counter: 0,
             };
     }
-}
-
-function normalizeName(name: string): string {
-    return name.trim().toLowerCase();
 }

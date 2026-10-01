@@ -7,6 +7,7 @@ import type { Actor } from "../shared/actor";
 import type { GameState } from "../shared/state";
 
 import type { GameEvent } from "./event";
+import { getPlayerId } from "../shared/model/player";
 
 export type CommandError = {
     code: string;
@@ -126,9 +127,9 @@ function becomePlayer(state: GameState, actor: Actor, desiredName: string): Comm
         };
     }
 
-    const name = desiredName.trim();
+    const cleanDesiredName = desiredName.trim();
 
-    if (name.length === 0) {
+    if (cleanDesiredName.length === 0) {
         return {
             type: "ERROR",
             error: {
@@ -138,7 +139,7 @@ function becomePlayer(state: GameState, actor: Actor, desiredName: string): Comm
         };
     }
 
-    if (isAlphanumeric(name) === false) {
+    if (isAlphanumeric(cleanDesiredName) === false) {
         return {
             type: "ERROR",
             error: {
@@ -148,10 +149,10 @@ function becomePlayer(state: GameState, actor: Actor, desiredName: string): Comm
         };
     }
 
-    const key = normalizeName(name);
+    const playerId = getPlayerId(cleanDesiredName);
 
     // Rejoin as an existing Player
-    const existingPlayer = state.players[key];
+    const existingPlayer = state.players[playerId];
     if (existingPlayer !== undefined) {
         return {
             type: "SUCCESS",
@@ -171,7 +172,7 @@ function becomePlayer(state: GameState, actor: Actor, desiredName: string): Comm
             {
                 type: "PLAYER_BECAME",
                 player: {
-                    name: name,
+                    displayName: cleanDesiredName,
                 },
             },
         ],
@@ -210,9 +211,7 @@ function destroyPlayer(state: GameState, actor: Actor): CommandResult {
         };
     }
 
-    const key = normalizeName(actor.name);
-
-    if (!state.players[key]) {
+    if (!state.players[actor.playerId]) {
         return {
             type: "ERROR",
             error: {
@@ -227,7 +226,7 @@ function destroyPlayer(state: GameState, actor: Actor): CommandResult {
         events: [
             {
                 type: "PLAYER_DESTROYED",
-                playerName: actor.name,
+                playerId: actor.playerId,
             }
         ]
     };
@@ -297,10 +296,6 @@ function resetCounter(state: GameState, actor: Actor): CommandResult {
             }
         ],
     };
-}
-
-function normalizeName(name: string): string {
-    return name.trim().toLowerCase();
 }
 
 function isAlphanumeric(str: string): boolean {

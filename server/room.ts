@@ -1,6 +1,6 @@
-// This file contains the types and functions for the game room. This is where the "command" -> "event" -> "update state" flow occurs. 
+// This file contains the types and functions for the game room. 
 
-import type { WebSocket } from "ws";
+// This is where the "command" -> "event" -> "update state" flow occurs. 
 
 import type { Command } from "../shared/command";
 import type { Actor } from "../shared/actor";

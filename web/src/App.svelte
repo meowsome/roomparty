@@ -1,5 +1,6 @@
 <script lang="ts">
-    let socket = new WebSocket("ws://localhost:8080");
+    const host = window.location.hostname; 
+    let socket = new WebSocket(`ws://${host}:8080`);
 
     let state;
 
@@ -81,7 +82,7 @@
     <h2>Players</h2>
 
     {#each Object.values(state.players) as player}
-        <p>{player.name}</p>
+        <p>{player.displayName}</p>
     {/each}
 
 {/if}
