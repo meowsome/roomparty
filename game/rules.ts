@@ -4,7 +4,7 @@
 
 import type { Command, CommandResult, CommandError } from "../shared/command";
 import type { Actor } from "../shared/actor";
-import type { GameState } from "../shared/state";
+import type { GameState } from "../shared/model/game-state";
 
 import type { GameEvent } from "../shared/event";
 import { getPlayerId } from "../shared/model/player";

@@ -2,7 +2,7 @@
 // It does not contain any validation logic. It is a simple pure function that applies the event to the state. 
 
 import type { GameEvent } from "../shared/event";
-import type { GameState } from "../shared/state";
+import type { GameState } from "../shared/model/game-state";
 import { getPlayerId } from "../shared/model/player";
 
 export function applyGameEvent(

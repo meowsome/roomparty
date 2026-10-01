@@ -1,20 +1,20 @@
-// This defines the session logic for a single connection to the server. It handles receiving commands from the client, 
+// This defines the connection logic for a single connection to the server. It handles receiving commands from the client, 
 // executing them against the room, and sending back the resulting state or errors.
 
 import type { Connection } from "../shared/connection";
-
 import type { Command } from "../shared/command";
 import type { Actor } from "../shared/actor";
-import { getPlayerId } from "../shared/model/player";
 
-import type { GameEvent } from "../shared/event";
 import { getGameStateView } from "../game/view";
+import { applyActorEvent } from "./actor-reducer";
+import { updateConnections } from "./connections";
+
 import {
     executeCommand,
     type Room,
 } from "./room";
 
-export function startSession(
+export function handleConnection(
     connection: Connection,
     room: Room,
 ) {
@@ -84,71 +84,13 @@ function handleMessage(
         return actor;
     }
 
-    // Handle session state affected by the events.
-    const newActor = updateSession(
-        connection,
-        room,
-        actor,
-        result.events,
-    );
+    // Potentially update the actor and the associated room's connections.
+    for (const event of result.events) {
+        actor = applyActorEvent(actor, event);
+        updateConnections(room, connection, event);
+    }
 
     broadcastState(room);
-
-    return newActor;
-}
-
-function updateSession(
-    connection: Connection,
-    room: Room,
-    actor: Actor,
-    events: GameEvent[],
-): Actor {
-    for (const event of events) {
-        switch (event.type) {
-
-            case "HOST_BECAME":
-                room.connections.unassigned.delete(connection);
-                actor = {
-                    type: "HOST",
-                };
-
-                room.connections.host = connection;
-                break;
-
-            case "PLAYER_BECAME":
-                room.connections.unassigned.delete(connection);
-
-                actor = {
-                    type: "PLAYER",
-                    playerId: getPlayerId(event.player.displayName),
-                };
-
-                room.connections.players.set(
-                    getPlayerId(event.player.displayName),
-                    connection,
-                );
-                break;
-
-            case "HOST_DESTROYED":
-                room.connections.host = null;
-                actor = {
-                    type: "UNASSIGNED",
-                };
-                room.connections.unassigned.add(connection);
-                break;
-
-            case "PLAYER_DESTROYED":
-                room.connections.players.delete(
-                    getPlayerId(event.playerId),
-                );
-                actor = {
-                    type: "UNASSIGNED",
-                };
-                room.connections.unassigned.add(connection);
-                break;
-
-        }
-    }
 
     return actor;
 }
