@@ -1,3 +1,6 @@
+// This defines the session logic for a single connection to the server. It handles receiving commands from the client, 
+// executing them against the room, and sending back the resulting state or errors.
+
 import type { Connection } from "../shared/connection";
 
 import type { Command } from "../shared/command";
@@ -11,7 +14,7 @@ import {
     type Room,
 } from "./room";
 
-export function handleConnection(
+export function startSession(
     connection: Connection,
     room: Room,
 ) {
@@ -64,12 +67,7 @@ function handleMessage(
         return actor;
     }
 
-    // Check if the command can be executed by this connection.
-    if (!canExecute(connection,room,command)) {
-        return actor;
-    }
-
-    // If so, execute the command and update the game state.
+    // Execute the command and potentially update the game state.
     const result = executeCommand(
         room,
         actor,
@@ -86,8 +84,8 @@ function handleMessage(
         return actor;
     }
 
-    // Handle special events that affect the connection identity.
-    const newActor = handleEvents(
+    // Handle session state affected by the events.
+    const newActor = updateSession(
         connection,
         room,
         actor,
@@ -99,33 +97,7 @@ function handleMessage(
     return newActor;
 }
 
-function canExecute(
-    connection: Connection,
-    room: Room,
-    command: Command,
-): boolean {
-    if (command.type === "BECOME" && command.role === "PLAYER") {
-        const name = command.desiredName
-            .trim()
-            .toLowerCase();
-
-        const existingConnection = room.connections.players.get(name);
-
-        if (existingConnection !== undefined && existingConnection !== connection) {
-            sendError(
-                connection,
-                "PLAYER_ALREADY_CONNECTED",
-                "That player is already connected.",
-            );
-
-            return false;
-        }
-    }
-
-    return true;
-}
-
-function handleEvents(
+function updateSession(
     connection: Connection,
     room: Room,
     actor: Actor,
@@ -134,7 +106,6 @@ function handleEvents(
     for (const event of events) {
         switch (event.type) {
 
-            // Handle special event types that affect the connection identity.
             case "HOST_BECAME":
                 room.connections.unassigned.delete(connection);
                 actor = {

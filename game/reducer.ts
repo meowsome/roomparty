@@ -5,7 +5,7 @@ import type { GameEvent } from "../shared/event";
 import type { GameState } from "../shared/state";
 import { getPlayerId } from "../shared/model/player";
 
-export function applyEvent(
+export function applyGameEvent(
     state: GameState,
     event: GameEvent,
 ): GameState {

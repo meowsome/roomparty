@@ -1,5 +1,5 @@
-// This is where commands are handled.
-// It takes the current game state, the actor (host or player), and the command, and returns 
+// This is where commands are resolved.
+// It takes the current game state, the actor (host or player), and the command, and resolves it into 
 // either an array of events to apply to the game state, or an error if the command is invalid.
 
 import type { Command, CommandResult, CommandError } from "../shared/command";
@@ -10,8 +10,7 @@ import type { GameEvent } from "../shared/event";
 import { getPlayerId } from "../shared/model/player";
 import { isKeyObject } from "util/types";
 
-
-export function handleCommand(
+export function resolveCommand(
     state: GameState,
     actor: Actor,
     command: Command,
@@ -20,10 +19,16 @@ export function handleCommand(
         case "BECOME":
             switch (command.role) {
                 case "HOST":
-                    return becomeHost(state, actor);
-
+                        return {
+                            type: "SUCCESS",
+                            events: [
+                                {
+                                    type: "HOST_BECAME"
+                                }
+                            ],
+                        };
                 case "PLAYER":
-                    return becomePlayer(state, actor, command.desiredName);
+                    return becomePlayer(state, command.desiredName);
                 default:
                     return {
                         type: "ERROR",
@@ -37,9 +42,16 @@ export function handleCommand(
         case "DESTROY":
             switch(actor.type){
                 case "HOST":
-                    return destroyHost(state, actor);
+                        return {
+                            type: "SUCCESS",
+                            events: [
+                                {
+                                    type: "HOST_DESTROYED",
+                                }
+                            ]
+                        };
                 case "PLAYER":
-                    return destroyPlayer(state, actor);
+                    return destroyPlayer(state, actor.playerId);
                 default:
                     return {
                         type: "ERROR",
@@ -70,49 +82,7 @@ export function handleCommand(
     }
 }
 
-function becomeHost(state: GameState, actor: Actor): CommandResult {
-
-    if (state.host) {
-        return {
-            type: "ERROR",
-            error: {
-                code: "HOST_EXISTS",
-                message: "There is already a host in the game.",
-            },
-        };
-    }
-
-    if (actor.type !== "UNASSIGNED") {
-        return {
-            type: "ERROR",
-            error: {
-                code: "ALREADY_ASSIGNED",
-                message: "This connection already has an identity.",
-            },
-        };
-    }
-
-    return {
-        type: "SUCCESS",
-        events: [
-            {
-                type: "HOST_BECAME"
-            }
-        ],
-    };
-
-}
-
-function becomePlayer(state: GameState, actor: Actor, desiredName: string): CommandResult {
-    if (actor.type !== "UNASSIGNED") {
-        return {
-            type: "ERROR",
-            error: {
-                code: "ALREADY_ASSIGNED",
-                message: "This connection already has an identity.",
-            },
-        };
-    }
+function becomePlayer(state: GameState, desiredName: string): CommandResult {
 
     const cleanDesiredName = desiredName.trim();
 
@@ -166,44 +136,14 @@ function becomePlayer(state: GameState, actor: Actor, desiredName: string): Comm
     };
 }
 
-function destroyHost(state: GameState, actor: Actor): CommandResult {
-    if (actor.type !== "HOST") {
-        return {
-            type: "ERROR",
-            error: {
-                code: "NOT_A_HOST",
-                message: "Only the host can destroy themselves.",
-            },
-        };
-    }
+function destroyPlayer(state: GameState, playerId: string): CommandResult {
 
-    return {
-        type: "SUCCESS",
-        events: [
-            {
-                type: "HOST_DESTROYED",
-            }
-        ]
-    };
-}
-
-function destroyPlayer(state: GameState, actor: Actor): CommandResult {
-    if (actor.type !== "PLAYER") {
-        return {
-            type: "ERROR",
-            error: {
-                code: "NOT_A_PLAYER",
-                message: "Only a player can destroy themselves.",
-            },
-        };
-    }
-
-    if (!state.players[actor.playerId]) {
+    if (!state.players[playerId]) {
         return {
             type: "ERROR",
             error: {
                 code: "PLAYER_NOT_FOUND",
-                message: "The player does not exist.",
+                message: "The player does not exist in the game.",
             },
         };
     }
@@ -213,7 +153,7 @@ function destroyPlayer(state: GameState, actor: Actor): CommandResult {
         events: [
             {
                 type: "PLAYER_DESTROYED",
-                playerId: actor.playerId,
+                playerId: playerId,
             }
         ]
     };
