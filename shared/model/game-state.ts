@@ -4,10 +4,8 @@ import type { Player } from "./player";
 
 export type GameState = {
     revision: number;
+    host: boolean;
+    players: Record<string, Player>;
 
     counter: number;
-
-    host: boolean;
-
-    players: Record<string, Player>;
 };

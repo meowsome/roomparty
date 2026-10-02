@@ -4,8 +4,8 @@ import type { Player } from "./player";
 // The state that every client can see (including unassigned clients).
 export type BaseGameStateView = {
     revision: number;
-    players: Record<string, Player>;
     host: boolean;
+    players: Record<string, Player>;
 };
 
 // Information that a host can see.

@@ -15,16 +15,18 @@ export function getGameStateView(
             return {
                 revision: state.revision,
                 host: state.host,
-                counter: state.counter,
                 players: state.players,
+
+                counter: state.counter,
             };
 
         case "PLAYER":
             return {
                 revision: state.revision,
                 host: state.host,
-                counter: state.counter,
                 players: state.players,
+                
+                counter: state.counter,
             };
 
         case "UNASSIGNED":
