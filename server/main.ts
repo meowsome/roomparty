@@ -1,6 +1,6 @@
 import { WebSocketServer } from "ws";
 
-import { ServerConnection } from "./server-connection";
+import { ServerWebSocketConnection } from "./server-connection";
 import { handleConnection } from "./handle-connection";
 import { createRoom } from "./room";
 
@@ -11,7 +11,7 @@ const server = new WebSocketServer({
 });
 
 server.on("connection", socket => {
-    const connection = new ServerConnection(socket);
+    const connection = new ServerWebSocketConnection(socket);
 
     handleConnection(
         connection,

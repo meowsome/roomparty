@@ -11,6 +11,7 @@ export type Room = {
 export function createRoom(): Room {
     return {
         game: {
+            revision: 0,
             counter: 0,
             host: false,
             players: {},

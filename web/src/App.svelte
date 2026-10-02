@@ -1,33 +1,42 @@
 <script lang="ts">
-    const host = window.location.hostname; 
-    let socket = new WebSocket(`ws://${host}:8080`);
+    import type { Actor } from "../../shared/actor";
+    import type { ClientMessage } from "../../shared/message";
+    import type { ClientGameStateView } from "../../shared/model/game-state-view";
 
-    let state;
+    import { ClientWebSocketConnection } from "./client-connection";
 
-    let actor = {
+    const host = window.location.hostname;
+    const connection = new ClientWebSocketConnection(
+        `ws://${host}:8080`
+    );
+
+    let state: ClientGameStateView | null = null;
+
+    let actor: Actor = {
         type: "UNASSIGNED",
     };
 
     let name = "";
 
-    socket.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-
+    connection.receive(message => {
         if (message.type === "STATE") {
-            state = message.state;
-            actor = message.actor;
+            // Only update the state if the revision is newer than the current state
+            if (message.state.revision > (state?.revision ?? -1)) {
+                state = message.state;
+                actor = message.actor;
+            }
         }
 
         if (message.type === "ERROR") {
             console.log(message.error);
         }
-    };
+    });
 
-    function send(command: object) {
-        socket.send(JSON.stringify(command));
+    function send(command: ClientMessage): void {
+        connection.send(command);
     }
 
-    function becomePlayer() {
+    function becomePlayer(): void {
         send({
             type: "BECOME",
             role: "PLAYER",
@@ -35,14 +44,14 @@
         });
     }
 
-    function becomeHost() {
+    function becomeHost(): void {
         send({
             type: "BECOME",
             role: "HOST",
         });
     }
 
-    function leave(){
+    function leave(): void {
         send({
             type: "DESTROY",
         });
@@ -52,7 +61,7 @@
 {#if state}
     <h1>Room Party</h1>
 
-    {#if actor.type !== "UNASSIGNED"}
+    {#if "counter" in state}
         <h2>Counter: {state.counter}</h2>
     {/if}
 

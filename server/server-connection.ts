@@ -1,18 +1,18 @@
 // A server-side implementation of the Connection interface, which wraps a WebSocket connection.
 
 import type { WebSocket } from "ws";
-import type { Connection } from "../shared/connection";
 
-export class ServerConnection implements Connection {
-    constructor(
-        private socket: WebSocket,
-    ) {}
+import type { ServerConnection } from "../shared/connection";
+import type { ClientMessage, ServerMessage } from "../shared/message";
 
-    send(message: object): void {
+export class ServerWebSocketConnection implements ServerConnection {
+    constructor(private socket: WebSocket) {}
+
+    send(message: ServerMessage): void {
         this.socket.send(JSON.stringify(message));
     }
 
-    receive(callback: (message: object) => void): void {
+    receive(callback: (message: ClientMessage) => void): void {
         this.socket.on("message", raw => {
             const message = JSON.parse(raw.toString());
             callback(message);

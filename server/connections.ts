@@ -1,6 +1,6 @@
 // Manages the connections in a room, including the host, players, and unassigned connections.
 
-import { Connection } from "../shared/connection";
+import { ServerConnection } from "../shared/connection";
 import { GameEvent } from "../shared/event";
 import { getPlayerId } from "../shared/model/player";
 import type { Actor } from "../shared/actor";
@@ -9,15 +9,15 @@ import { Room } from "./room";
 
 
 export type Connections = {
-    host: Connection | null;
-    players: Map<string, Connection>;
-    unassigned: Set<Connection>;
+    host: ServerConnection | null;
+    players: Map<string, ServerConnection>;
+    unassigned: Set<ServerConnection>;
 };
 
 // Handle room connections based on the game events.
 export function updateConnections(
     room: Room,
-    connection: Connection,
+    connection: ServerConnection,
     event: GameEvent,
 ) {
     switch (event.type) {
@@ -61,12 +61,12 @@ export function updateConnections(
     }
 }
 
-export function addConnection(room: Room, connection: Connection): void {
+export function addConnection(room: Room, connection: ServerConnection): void {
     room.connections.unassigned.add(connection);
 }
 
 export function removeConnection(
-    connection: Connection,
+    connection: ServerConnection,
     room: Room,
     actor: Actor,
 ) {

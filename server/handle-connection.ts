@@ -1,6 +1,6 @@
 // Handles the lifecycle of a connection to the server, including receiving commands, executing them, and sending back the resulting game state.
 
-import type { Connection } from "../shared/connection";
+import type { ServerConnection } from "../shared/connection";
 import type { Command } from "../shared/command";
 import type { Actor } from "../shared/actor";
 import { getPlayerId } from "../shared/model/player";
@@ -14,7 +14,7 @@ import { executeCommand } from "./command-executor";
 import { type Room } from "./room";  
 
 export function handleConnection(
-    connection: Connection,
+    connection: ServerConnection,
     room: Room,
 ) {
     // Each connection has an associated actor, which starts as unassigned and can become a host or player.
@@ -50,7 +50,7 @@ export function handleConnection(
 }
 
 function handleMessage(
-    connection: Connection,
+    connection: ServerConnection,
     room: Room,
     actor: Actor,
     raw: object,
@@ -86,7 +86,6 @@ function handleMessage(
 
     // Apply the events to the game state and update the actor and connections accordingly.
     for (const event of result.events) {
-        console.log("Applying event:", event);
         room.game = applyGameEvent(room.game, event);
         actor = updateActor(actor, event);
         updateConnections(room, connection, event);
@@ -98,7 +97,7 @@ function handleMessage(
 }
 
 function sendView(
-    connection: Connection,
+    connection: ServerConnection,
     room: Room,
     actor: Actor,
 ) {
@@ -114,7 +113,7 @@ function sendView(
 }
 
 function sendError(
-    connection: Connection,
+    connection: ServerConnection,
     code: string,
     message: string,
 ) {
