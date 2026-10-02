@@ -52,26 +52,54 @@ export function applyGameEvent(
             };
             break;
 
-        case "COUNTER_INCREMENTED": 
+        case "VOTE_CAST":
             nextState = {
                 ...state,
-                counter: state.counter + 1,
+                // In our rounds,
+                rounds: state.rounds.map((round, index) =>
+                    // Find the round that matches the round in the event.
+                    index === state.currentRound
+                        // And then update the votes for that round
+                        ? {
+                            ...round,
+                            votes: {
+                                ...round.votes,
+                                // With our new vote for this player.
+                                [event.playerId]: event.vote,
+                            },
+                        }
+                        // Otherwise don't touch it.
+                        : round
+                ),
             };
             break;
 
-        case "COUNTER_DECREMENTED": 
-            nextState = {
-                ...state,
-                counter: state.counter - 1,
-            };
+        case "GAME_ADVANCED":
+            switch (state.phase) {
+                case "VOTING":
+                    nextState = {
+                        ...state,
+                        phase: "RESULTS",
+                    };
+                    break;
+                case "RESULTS":
+                    nextState = {
+                        ...state,
+                        phase: "WORD_CLOUD",
+                    };
+                    break;
+                case "WORD_CLOUD":
+                    nextState = {
+                        ...state,
+                        phase: "VOTING",
+                        currentRound: state.currentRound + 1,
+                    };
+                    break;
+                default:
+                    return assertNever(state.phase);
+            }
             break;
-
-        case "COUNTER_RESET": 
-            nextState = {
-                ...state,
-                counter: 0,
-            };
-            break;
+            
 
         default:
             return assertNever(event);

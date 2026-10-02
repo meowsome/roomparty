@@ -17,6 +17,8 @@
     };
 
     let name = "";
+    let selectedOptionId: string | null = null; 
+    let freeformText = "";
 
     connection.receive(message => {
         if (message.type === "STATE") {
@@ -56,36 +58,90 @@
             type: "DESTROY",
         });
     }
+
+
+
+    function submitVote(): void { 
+        send({ 
+            type: "CAST_VOTE", 
+            vote: 
+            { 
+                optionId: selectedOptionId, 
+                freeformText: freeformText, 
+            }, 
+        }); 
+    }
 </script>
 
 {#if state}
     <h1>Room Party</h1>
 
-    {#if "counter" in state}
-        <h2>Counter: {state.counter}</h2>
-    {/if}
-
-    {#if actor.type === "PLAYER"}
-        <button onclick={() => send({ type: "INCREMENT" })}> + </button>
-
-        <button onclick={() => send({ type: "DECREMENT" })}> - </button>
-    {/if}
-
-    {#if actor.type === "HOST"}
-        <button onclick={() => send({ type: "RESET_COUNTER" })}> Reset </button>
-    {/if}
-
     {#if actor.type === "UNASSIGNED"}
-
+        
+        <!-- View when not in a game -->
         <input bind:value={name} placeholder="Name" />
 
-        <button onclick={becomePlayer}> Become Player </button>
+        <button onclick={becomePlayer}>
+            Become Player
+        </button>
 
         {#if state.host === false}
-            <button onclick={becomeHost}> Become Host </button>
+            <button onclick={becomeHost}>
+                Become Host
+            </button>
         {/if}
+
     {:else}
-        <button onclick={leave}> Leave </button>
+
+        <!-- View when in a game -->
+        <button onclick={leave}>
+            Leave
+        </button>
+
+        {#if actor.type === "PLAYER" && "currentOptions" in state}
+
+            <h2>Round {state.currentRound + 1}</h2>
+
+            {#each state.currentOptions as option}
+                <button onclick={() => selectedOptionId = option.id}>
+                    <img src={option.imageLink} alt="" />
+                </button>
+            {/each}
+
+            <textarea
+                bind:value={freeformText}
+                placeholder="Your answer..."
+            ></textarea>
+
+            <button onclick={submitVote}>
+                Submit
+            </button>
+
+        {/if}
+
+        {#if actor.type === "HOST" && "currentVotes" in state}
+
+            <h2>Round {state.currentRound + 1}</h2>
+
+            {#each state.currentOptions as option}
+                <div>
+                    <img src={option.imageLink} alt="" />
+
+                    <p>
+                        {Object.values(state.currentVotes)
+                            .filter(vote => vote.optionId === option.id)
+                            .length}
+                        votes
+                    </p>
+                </div>
+            {/each}
+
+            <button onclick={() => send({ type: "ADVANCE_GAME" })}>
+                Advance
+            </button>
+
+        {/if}
+
     {/if}
 
     <h2>Players</h2>
@@ -93,5 +149,4 @@
     {#each Object.values(state.players) as player}
         <p>{player.displayName}</p>
     {/each}
-
 {/if}

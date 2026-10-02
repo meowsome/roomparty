@@ -17,7 +17,11 @@ export function getGameStateView(
                 host: state.host,
                 players: state.players,
 
-                counter: state.counter,
+                phase: state.phase,
+                currentRound: state.currentRound,
+
+                currentOptions: state.rounds[state.currentRound].options,
+                currentVotes: state.rounds[state.currentRound].votes,
             };
 
         case "PLAYER":
@@ -25,8 +29,12 @@ export function getGameStateView(
                 revision: state.revision,
                 host: state.host,
                 players: state.players,
-                
-                counter: state.counter,
+
+                phase: state.phase,
+                currentRound: state.currentRound,
+
+                currentOptions: state.rounds[state.currentRound].options,
+                currentVote: state.rounds[state.currentRound].votes[actor.playerId] ?? null,
             };
 
         case "UNASSIGNED":
@@ -34,6 +42,9 @@ export function getGameStateView(
                 revision: state.revision,
                 host: state.host,
                 players: state.players,
+
+                phase: state.phase,
+                currentRound: state.currentRound,
             };
 
         default:

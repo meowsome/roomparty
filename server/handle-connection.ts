@@ -11,7 +11,7 @@ import { applyGameEvent } from "../game/apply-event";
 
 import { updateConnections, addConnection, removeConnection } from "./connections";
 import { executeCommand } from "./execute-command";
-import { type Room } from "./room";  
+import { type Room } from "../game/room";  
 
 export function handleConnection(
     connection: ServerConnection,

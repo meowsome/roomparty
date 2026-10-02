@@ -5,7 +5,7 @@ import { GameEvent } from "../shared/event";
 import { getPlayerId } from "../shared/model/player";
 import type { Actor } from "../shared/actor";
 
-import { Room } from "./room";
+import { Room } from "../game/room";
 
 
 export type Connections = {

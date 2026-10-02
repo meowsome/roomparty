@@ -2,9 +2,17 @@ import { WebSocketServer } from "ws";
 
 import { ServerWebSocketConnection } from "./server-connection";
 import { handleConnection } from "./handle-connection";
-import { createRoom } from "./room";
+import { createRoom } from "../game/room";
 
-const room = createRoom();
+import { readFileSync } from "node:fs";
+
+
+
+const rounds = JSON.parse(
+    readFileSync("./game/rounds.json", "utf8")
+);
+
+const room = createRoom(rounds);
 
 const server = new WebSocketServer({
     port: 8080,

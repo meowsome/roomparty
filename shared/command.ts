@@ -2,29 +2,15 @@
 // They generate events that are applied to the game state in `server/room.ts` using the `applyEvent` function.
 
 import type { GameEvent } from "./event";
+import type { Vote } from "./model/game-state";
 
 export type Command =
-    | {
-        type: "BECOME";
-        role: "HOST" 
-    }
-    | {
-        type: "BECOME";
-        role: "PLAYER";
-        desiredName: string;
-    }
-    | {
-        type: "DESTROY";
-    }
-    | {
-        type: "INCREMENT";
-    }
-    | {
-        type: "DECREMENT";
-    }
-    | {
-        type: "RESET_COUNTER";
-    };
+    | { type: "BECOME"; role: "HOST" }
+    | { type: "BECOME"; role: "PLAYER"; desiredName: string; }
+    | { type: "DESTROY"; }
+
+    | { type: "CAST_VOTE"; vote: Vote; }
+    | { type: "ADVANCE_GAME"; }
 
 export type CommandError = {
     code: string;

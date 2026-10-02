@@ -1,3 +1,4 @@
+import { GamePhase, Vote, VoteOption } from "./game-state";
 import type { Player } from "./player";
 
 
@@ -6,16 +7,21 @@ export type BaseGameStateView = {
     revision: number;
     host: boolean;
     players: Record<string, Player>;
+
+    phase: GamePhase;
+    currentRound: number;
 };
 
 // Information that a host can see.
 export type HostGameStateView = BaseGameStateView & {
-    counter: number;
+    currentOptions: VoteOption[]; // The options available to the player in the current round.
+    currentVotes: Record<string, Vote>; // All votes cast by players in the current round, keyed by player ID.
 };
 
 // Information that a player can see.
 export type PlayerGameStateView = BaseGameStateView & {
-    counter: number;
+    currentOptions: VoteOption[]; // The options available to the player in the current round.
+    currentVote: Vote | null; // The player's own vote, if they have cast one.
 };
 
 // The union of all possible game state views that can be sent to the client.

@@ -8,7 +8,7 @@ import { getPlayerId } from "../shared/model/player";
 import { resolveCommand } from "../game/resolve-command";
 
 import { isPlayerConnected } from "./connections";
-import { Room } from "./room";
+import { Room } from "../game/room";
 
 export function executeCommand(
     room: Room,

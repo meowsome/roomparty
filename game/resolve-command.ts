@@ -3,8 +3,10 @@
 
 import type { Command, CommandResult } from "../shared/command";
 import type { Actor } from "../shared/actor";
-import type { GameState } from "../shared/model/game-state";
+import type { GameState, Vote } from "../shared/model/game-state";
 import { getPlayerId } from "../shared/model/player";
+
+import { assertNever } from "../shared/assert-never";
 
 export function resolveCommand(
     state: GameState,
@@ -58,23 +60,13 @@ export function resolveCommand(
                     };
             }
 
-        case "INCREMENT":
-            return increment(state, actor);
+        case "CAST_VOTE":
+            return castVote(state, actor, command.vote);
+        case "ADVANCE_GAME":
+            return advanceGame(state, actor);
 
-        case "DECREMENT":
-            return decrement(state, actor);
-
-        case "RESET_COUNTER":
-            return resetCounter(state, actor);
-        
         default:
-            return {
-                type: "ERROR",
-                error: {
-                    code: "INVALID_COMMAND",
-                    message: "The provided command is not recognized.",
-                },
-            };
+            return assertNever(command);
     }
 }
 
@@ -155,36 +147,23 @@ function destroyPlayer(state: GameState, playerId: string): CommandResult {
     };
 }
 
-function increment(state: GameState, actor: Actor): CommandResult {
-    if (actor.type !== "PLAYER")
-    {
-        return {
-            type: "ERROR",
-            error: {
-                code: "NOT_A_PLAYER",
-                message: "Only a player can increment the counter.",
-            },
-        };
-    }
-
-
-    return {
-        type: "SUCCESS",
-        events: [
-            {
-                type: "COUNTER_INCREMENTED",
-            }
-        ],
-    };
-}
-
-function decrement(state: GameState, actor: Actor): CommandResult {
+function castVote(state: GameState, actor: Actor, vote: Vote): CommandResult {
     if (actor.type !== "PLAYER") {
         return {
             type: "ERROR",
             error: {
                 code: "NOT_A_PLAYER",
-                message: "Only a player can decrement the counter.",
+                message: "Only a player can cast a vote.",
+            },
+        };
+    }
+
+    if (state.phase !== "VOTING") {
+        return {
+            type: "ERROR",
+            error: {
+                code: "NOT_VOTING_PHASE",
+                message: "Votes can only be cast during the voting phase.",
             },
         };
     }
@@ -193,33 +172,63 @@ function decrement(state: GameState, actor: Actor): CommandResult {
         type: "SUCCESS",
         events: [
             {
-                type: "COUNTER_DECREMENTED",
+                type: "VOTE_CAST",
+                playerId: actor.playerId,
+                vote: vote,
             }
-        ],
+        ]
     };
+
 }
 
-function resetCounter(state: GameState, actor: Actor): CommandResult {
-    if (actor.type !== "HOST")
-    {
+function advanceGame(
+    state: GameState,
+    actor: Actor,
+): CommandResult {
+
+    if (actor.type !== "HOST") {
         return {
             type: "ERROR",
             error: {
                 code: "NOT_A_HOST",
-                message: "Only the host can reset the counter.",
+                message: "Only the host can advance the game.",
             },
         };
     }
 
-    return {
-        type: "SUCCESS",
-        events: [
-            {
-                type: "COUNTER_RESET",
+    switch (state.phase) {
+        case "VOTING":
+        case "RESULTS":
+            return {
+                type: "SUCCESS",
+                events: [
+                    { type: "GAME_ADVANCED" },
+                ],
+            };
+
+        case "WORD_CLOUD":
+            if (state.currentRound >= state.rounds.length - 1) {
+                return {
+                    type: "ERROR",
+                    error: {
+                        code: "GAME_COMPLETE",
+                        message: "There are no more rounds.",
+                    },
+                };
             }
-        ],
-    };
+
+            return {
+                type: "SUCCESS",
+                events: [
+                    { type: "GAME_ADVANCED" },
+                ],
+            };
+
+        default:
+            return assertNever(state.phase);
+    }
 }
+
 
 function isAlphanumeric(str: string): boolean {
   return /^[a-zA-Z0-9]+$/.test(str);

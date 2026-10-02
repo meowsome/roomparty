@@ -2,10 +2,34 @@
 
 import type { Player } from "./player";
 
+export type GamePhase =
+    | "VOTING"
+    | "RESULTS"
+    | "WORD_CLOUD";
+
+export type Vote = {
+    optionId: string | null;
+    freeformText: string;
+};
+
+export type VoteOption = {
+    id: string;
+    imageLink: string;
+};
+
+export type Round = {
+    options: VoteOption[];
+    votes: Record<string, Vote>; // playerId-keyed submissions
+}; 
+
+
+
 export type GameState = {
     revision: number;
     host: boolean;
     players: Record<string, Player>;
 
-    counter: number;
+    phase: GamePhase;
+    currentRound: number;
+    rounds: Round[];
 };

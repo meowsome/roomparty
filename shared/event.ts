@@ -2,6 +2,7 @@
 // They are applied to the game state in `server/room.ts` using the `applyEvent` function.
 // They are also sent to the clients.
 
+import { Vote } from "./model/game-state";
 import type { Player } from "./model/player";
 
 export type GameEvent =
@@ -20,11 +21,10 @@ export type GameEvent =
         playerId: string;
     }
     | {
-        type: "COUNTER_INCREMENTED";
+        type: "VOTE_CAST";
+        playerId: string;
+        vote: Vote;
     }
     | {
-        type: "COUNTER_DECREMENTED";
-    }
-    | {
-        type: "COUNTER_RESET";
+        type: "GAME_ADVANCED";
     };
