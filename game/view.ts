@@ -13,6 +13,8 @@ export function getGameStateView(
     switch (actor.type) {
         case "HOST":
             return {
+                actor: actor,
+
                 revision: state.revision,
                 host: state.host,
                 players: state.players,
@@ -26,6 +28,8 @@ export function getGameStateView(
 
         case "PLAYER":
             return {
+                actor: actor,
+
                 revision: state.revision,
                 host: state.host,
                 players: state.players,
@@ -39,6 +43,8 @@ export function getGameStateView(
 
         case "UNASSIGNED":
             return {
+                actor: actor,
+
                 revision: state.revision,
                 host: state.host,
                 players: state.players,

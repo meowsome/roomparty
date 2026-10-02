@@ -65,6 +65,14 @@ function authorizeCommand(
 
             if (command.role === "HOST") {
 
+                // The name of the host must match the super secret password.
+               if (command.desiredName !== room.hostPassword) {
+                    return {
+                        code: "HOST_PASSWORD_INCORRECT",
+                        message: "The host password is incorrect.",
+                    };
+                }
+
                 // A host identity can only be taken if 
                 // there is no host already connected.
                 if (room.connections.host !== null) {

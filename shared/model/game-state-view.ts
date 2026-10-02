@@ -14,18 +14,32 @@ export type BaseGameStateView = {
 
 // Information that a host can see.
 export type HostGameStateView = BaseGameStateView & {
+    actor: {
+        type: "HOST";
+    };
     currentOptions: VoteOption[]; // The options available to the player in the current round.
     currentVotes: Record<string, Vote>; // All votes cast by players in the current round, keyed by player ID.
 };
 
 // Information that a player can see.
 export type PlayerGameStateView = BaseGameStateView & {
+    actor: {
+        type: "PLAYER";
+        playerId: string;
+    };
     currentOptions: VoteOption[]; // The options available to the player in the current round.
     currentVote: Vote | null; // The player's own vote, if they have cast one.
 };
 
+// Information that an unassigned player can see.
+export type UnassignedGameStateView = BaseGameStateView & {
+    actor: {
+        type: "UNASSIGNED";
+    };
+};
+
 // The union of all possible game state views that can be sent to the client.
 export type ClientGameStateView =
-    | BaseGameStateView
     | HostGameStateView
     | PlayerGameStateView
+    | UnassignedGameStateView

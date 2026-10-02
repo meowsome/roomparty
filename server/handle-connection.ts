@@ -41,6 +41,12 @@ export function handleConnection(
     });
 
     connection.receiveClose(() => {
+        if (actor.type === "HOST") {
+            room.game = applyGameEvent(room.game, {
+                type: "HOST_DESTROYED",
+            });
+        }
+
         removeConnection(
             connection,
             room,
@@ -107,8 +113,7 @@ function sendView(
         state: getGameStateView(
             room.game,
             actor,
-        ),
-        actor: actor
+        )
     });
 }
 

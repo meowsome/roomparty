@@ -12,7 +12,7 @@ const rounds = JSON.parse(
     readFileSync("./game/rounds.json", "utf8")
 );
 
-const room = createRoom(rounds);
+const room = createRoom(rounds, "password123");
 
 const server = new WebSocketServer({
     port: 8080,

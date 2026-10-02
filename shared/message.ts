@@ -1,4 +1,3 @@
-import type { Actor } from "./actor";
 import type { Command } from "./command";
 import type { ClientGameStateView } from "./model/game-state-view";
 
@@ -11,7 +10,6 @@ export type ServerMessage =
     | {
         type: "STATE";
         state: ClientGameStateView;
-        actor: Actor;
     }
     | {
         type: "ERROR";

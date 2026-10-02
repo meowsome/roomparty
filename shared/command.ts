@@ -5,7 +5,7 @@ import type { GameEvent } from "./event";
 import type { Vote } from "./model/game-state";
 
 export type Command =
-    | { type: "BECOME"; role: "HOST" }
+    | { type: "BECOME"; role: "HOST"; desiredName: string; }
     | { type: "BECOME"; role: "PLAYER"; desiredName: string; }
     | { type: "DESTROY"; }
 

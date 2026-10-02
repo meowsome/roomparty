@@ -1,5 +1,4 @@
 <script lang="ts">
-    import type { Actor } from "../../shared/actor";
     import type { ClientMessage } from "../../shared/message";
     import type { ClientGameStateView } from "../../shared/model/game-state-view";
 
@@ -12,25 +11,22 @@
 
     let state: ClientGameStateView | null = null;
 
-    let actor: Actor = {
-        type: "UNASSIGNED",
-    };
-
     let name = "";
     let selectedOptionId: string | null = null; 
     let freeformText = "";
+    let error = ""
 
     connection.receive(message => {
         if (message.type === "STATE") {
             // Only update the state if the revision is newer than the current state
             if (message.state.revision > (state?.revision ?? -1)) {
                 state = message.state;
-                actor = message.actor;
+                error = ""
             }
         }
 
         if (message.type === "ERROR") {
-            console.log(message.error);
+            error = message.error.message;
         }
     });
 
@@ -50,6 +46,7 @@
         send({
             type: "BECOME",
             role: "HOST",
+            desiredName: name,
         });
     }
 
@@ -74,9 +71,16 @@
 </script>
 
 {#if state}
+
+    {#if error}
+        <div class="error">
+            {error}
+        </div>
+    {/if}
+
     <h1>Room Party</h1>
 
-    {#if actor.type === "UNASSIGNED"}
+    {#if state.actor.type === "UNASSIGNED"}
         
         <!-- View when not in a game -->
         <input bind:value={name} placeholder="Name" />
@@ -98,7 +102,7 @@
             Leave
         </button>
 
-        {#if actor.type === "PLAYER" && "currentOptions" in state}
+        {#if state.actor.type === "PLAYER" && "currentOptions" in state}
 
             <h2>Round {state.currentRound + 1}</h2>
 
@@ -119,7 +123,7 @@
 
         {/if}
 
-        {#if actor.type === "HOST" && "currentVotes" in state}
+        {#if state.actor.type === "HOST" && "currentVotes" in state}
 
             <h2>Round {state.currentRound + 1}</h2>
 
