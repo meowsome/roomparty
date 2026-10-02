@@ -5,7 +5,7 @@ import type { Actor } from "../shared/actor";
 import type { CommandResult, CommandError } from "../shared/command";
 import { getPlayerId } from "../shared/model/player";
 
-import { resolveCommand } from "../game/rules";
+import { resolveCommand } from "../game/resolve-command";
 
 import { isPlayerConnected } from "./connections";
 import { Room } from "./room";

@@ -7,10 +7,10 @@ import { getPlayerId } from "../shared/model/player";
 import { GameEvent } from "../shared/event";
 
 import { getGameStateView } from "../game/view";
-import { applyGameEvent } from "../game/game-state-reducer";  
+import { applyGameEvent } from "../game/apply-event";  
 
 import { updateConnections, addConnection, removeConnection } from "./connections";
-import { executeCommand } from "./command-executor";
+import { executeCommand } from "./execute-command";
 import { type Room } from "./room";  
 
 export function handleConnection(

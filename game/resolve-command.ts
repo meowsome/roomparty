@@ -1,6 +1,5 @@
-// This is where commands are resolved.
-// It takes the current game state, the actor (host or player), and the command, and resolves it into 
-// either an array of events to apply to the game state, or an error if the command is invalid.
+// This takes a command and an actor, and returns the resulting game events if the command is valid, or an error if it is not. 
+// It does not mutate the game state.
 
 import type { Command, CommandResult } from "../shared/command";
 import type { Actor } from "../shared/actor";

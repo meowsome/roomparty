@@ -1,5 +1,5 @@
-// This is the single function that mutates the game state. It takes the current state and an event, and returns the new state.
-// It does not contain any validation logic. It is a simple pure function that applies the event to the state. 
+// Given a game state and a game event, returns the next game state after applying the event.
+// This assumes events are valid.
 
 import type { GameEvent } from "../shared/event";
 import type { GameState } from "../shared/model/game-state";
