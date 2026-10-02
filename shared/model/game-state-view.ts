@@ -20,5 +20,6 @@ export type PlayerGameStateView = BaseGameStateView & {
 
 // The union of all possible game state views that can be sent to the client.
 export type ClientGameStateView =
+    | BaseGameStateView
     | HostGameStateView
     | PlayerGameStateView
