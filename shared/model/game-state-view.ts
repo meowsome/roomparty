@@ -1,4 +1,4 @@
-import { GamePhase, Vote, VoteOption } from "./game-state";
+import type { GamePhase, Vote, VoteOption } from "./game-state";
 import type { Player } from "./player";
 
 

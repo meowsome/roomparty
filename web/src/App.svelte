@@ -2,7 +2,10 @@
     import type { ClientMessage } from "../../shared/message";
     import type { ClientGameStateView } from "../../shared/model/game-state-view";
 
+    import { countWords } from "./word-cloud";
     import { ClientWebSocketConnection } from "./client-connection";
+
+    import WordCloud from "./WordCloud.svelte";
 
     const host = window.location.hostname;
     const connection = new ClientWebSocketConnection(
@@ -106,20 +109,27 @@
 
             <h2>Round {state.currentRound + 1}</h2>
 
-            {#each state.currentOptions as option}
-                <button onclick={() => selectedOptionId = option.id}>
-                    <img src={option.imageLink} alt="" />
+            {#if state.phase === "VOTING"}
+                {#each state.currentOptions as option}
+                    <button onclick={() => selectedOptionId = option.id}>
+                        <img src={option.imageLink} alt="" />
+                    </button>
+                {/each}
+
+                <textarea
+                    bind:value={freeformText}
+                    placeholder="Your answer..."
+                ></textarea>
+
+                <button onclick={submitVote}>
+                    Submit
                 </button>
-            {/each}
-
-            <textarea
-                bind:value={freeformText}
-                placeholder="Your answer..."
-            ></textarea>
-
-            <button onclick={submitVote}>
-                Submit
-            </button>
+            
+            {:else if state.phase === "RESULTS"}
+                <p1> RESULTS PHASE </p1>
+            {:else}
+                <p1> WORDCLOUD </p1>
+            {/if}
 
         {/if}
 
@@ -127,18 +137,31 @@
 
             <h2>Round {state.currentRound + 1}</h2>
 
-            {#each state.currentOptions as option}
-                <div>
-                    <img src={option.imageLink} alt="" />
-
-                    <p>
-                        {Object.values(state.currentVotes)
-                            .filter(vote => vote.optionId === option.id)
-                            .length}
-                        votes
-                    </p>
-                </div>
-            {/each}
+        
+            {#if state.phase === "VOTING"}
+                {#each state.currentOptions as option}
+                    <div>
+                        <img src={option.imageLink} alt="" />
+                        <p>
+                            {Object.values(state.currentVotes)
+                                .filter(vote => vote.optionId === option.id)
+                                .length}
+                            votes
+                        </p>
+                    </div>
+                {/each}
+            {:else if state.phase === "RESULTS"}
+                <p1> RESULTS PHASE </p1>
+            {:else}
+                    
+                    <WordCloud
+                    words={countWords(
+                        Object.values(state.currentVotes)
+                            .map(vote => vote.freeformText)
+                            .filter(text => text.trim().length > 0)
+                        )}
+                    />
+            {/if}
 
             <button onclick={() => send({ type: "ADVANCE_GAME" })}>
                 Advance

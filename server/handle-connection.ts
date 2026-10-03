@@ -108,12 +108,12 @@ function sendView(
     actor: Actor,
 ) {
     // Provide the client with their view state as well as their actor identity.
+
+    const view = getGameStateView(room.game, actor);
+
     connection.send({
         type: "STATE",
-        state: getGameStateView(
-            room.game,
-            actor,
-        )
+        state: view,
     });
 }
 
