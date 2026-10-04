@@ -12,6 +12,7 @@ export type Connections = {
     host: ServerConnection | null;
     players: Map<string, ServerConnection>;
     unassigned: Set<ServerConnection>;
+    lastViewCacheJson: Map<ServerConnection, string>;
 };
 
 // Handle room connections based on the game events.
@@ -90,6 +91,9 @@ export function removeConnection(
             room.connections.unassigned.delete(connection);
             break;
     }
+
+    // Remove the cached view
+    room.connections.lastViewCacheJson.delete(connection);
 }
 
 export function isPlayerConnected(room: Room, playerId: string): boolean {

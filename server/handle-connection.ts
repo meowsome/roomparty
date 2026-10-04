@@ -107,14 +107,23 @@ function sendView(
     room: Room,
     actor: Actor,
 ) {
-    // Provide the client with their view state as well as their actor identity.
-
     const view = getGameStateView(room.game, actor);
 
-    connection.send({
-        type: "STATE",
-        state: view,
-    });
+    // Pull out the revision because that changes every time and defeats
+    // the purpose of caching.
+    const { revision, ...viewWithoutRevision } = view;
+    const viewCacheJson = JSON.stringify(viewWithoutRevision);
+
+    // Only send the view if it hasn't changed from the last send.
+    if (viewCacheJson !== room.connections.lastViewCacheJson.get(connection)) {
+        room.connections.lastViewCacheJson.set(connection, viewCacheJson);
+        connection.send({
+            type: "STATE",
+            state: view,
+        });
+    }
+
+
 }
 
 function sendError(

@@ -28,6 +28,7 @@ export function createRoom(rounds: any, hostPassword: string): Room {
             host: null,
             players: new Map(),
             unassigned: new Set(),
+            lastViewCacheJson: new Map(),
         },
     };
 }
