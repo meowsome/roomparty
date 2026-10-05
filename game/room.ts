@@ -1,7 +1,7 @@
 // A room is a single instance of a game, with its own game state and connections.
 
-import type { GameState, Round } from "../shared/model/game-state";
-import type { Connections } from "../server/connections";
+import type { GameState, Round } from "../shared/model/game-state.js";
+import type { Connections } from "../server/connections.js";
 
 export type Room = {
     hostPassword: string;

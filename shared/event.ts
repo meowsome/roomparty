@@ -2,8 +2,8 @@
 // They are applied to the game state in `server/room.ts` using the `applyEvent` function.
 // They are also sent to the clients.
 
-import { Vote } from "./model/game-state";
-import type { Player } from "./model/player";
+import { Vote } from "./model/game-state.js";
+import type { Player } from "./model/player.js";
 
 export type GameEvent =
     | {

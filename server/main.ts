@@ -1,28 +1,51 @@
 import { WebSocketServer } from "ws";
 
-import { ServerWebSocketConnection } from "./server-connection";
-import { handleConnection } from "./handle-connection";
-import { createRoom } from "../game/room";
+import { ServerWebSocketConnection } from "./server-connection.js";
+import { handleConnection } from "./handle-connection.js";
+import { createHttpServer } from "./http-server.js"
+import { createRoom } from "../game/room.js";
 
 import { readFileSync } from "node:fs";
 
+const production = process.argv.includes("--production");
 
+const hostPassword = production
+    ? process.env.ROOMPARTY_HOST_PASSWORD
+    : "dev";
 
+if (!hostPassword) {
+    throw new Error("ROOMPARTY_HOST_PASSWORD is not set");
+}
+
+// Create room
 const rounds = JSON.parse(
     readFileSync("./game/rounds.json", "utf8")
 );
+const room = createRoom(rounds, hostPassword);
 
-const room = createRoom(rounds, "password123");
 
-const server = new WebSocketServer({
-    port: 8080,
-});
+if (production) {
+    // Set up both http server and websocket server for prod.
+    const httpServer = createHttpServer();
 
-server.on("connection", socket => {
-    const connection = new ServerWebSocketConnection(socket);
+    const websocketServer = new WebSocketServer({
+        server: httpServer,
+    });
 
-    handleConnection(
-        connection,
-        room,
-    );
-});
+    websocketServer.on("connection", socket => {
+        const connection = new ServerWebSocketConnection(socket);
+        handleConnection(connection, room);
+    });
+
+    httpServer.listen(8080);
+} else {
+    // Set up websocket server only. Vite serves in dev mode.
+    const websocketServer = new WebSocketServer({
+        port: 8080,
+    });
+
+    websocketServer.on("connection", socket => {
+        const connection = new ServerWebSocketConnection(socket);
+        handleConnection(connection, room);
+    });
+}

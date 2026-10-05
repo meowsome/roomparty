@@ -1,14 +1,14 @@
 // Transforms commands into game events, if allowed. Does not touch the game state.
 
-import type { Command } from "../shared/command";
-import type { Actor } from "../shared/actor";
-import type { CommandResult, CommandError } from "../shared/command";
-import { getPlayerId } from "../shared/model/player";
+import type { Command } from "../shared/command.js";
+import type { Actor } from "../shared/actor.js";
+import type { CommandResult, CommandError } from "../shared/command.js";
+import { getPlayerId } from "../shared/model/player.js";
 
-import { resolveCommand } from "../game/resolve-command";
+import { resolveCommand } from "../game/resolve-command.js";
 
-import { isPlayerConnected } from "./connections";
-import { Room } from "../game/room";
+import { isPlayerConnected } from "./connections.js";
+import { Room } from "../game/room.js";
 
 export function executeCommand(
     room: Room,

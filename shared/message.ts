@@ -1,5 +1,5 @@
-import type { Command } from "./command";
-import type { ClientGameStateView } from "./model/game-state-view";
+import type { Command } from "./command.js";
+import type { ClientGameStateView } from "./model/game-state-view.js";
 
 // Commands sent from the client to the server.
 export type ClientMessage =

@@ -1,11 +1,11 @@
 // Manages the connections in a room, including the host, players, and unassigned connections.
 
-import { ServerConnection } from "../shared/connection";
-import { GameEvent } from "../shared/event";
-import { getPlayerId } from "../shared/model/player";
-import type { Actor } from "../shared/actor";
+import { ServerConnection } from "../shared/connection.js";
+import { GameEvent } from "../shared/event.js";
+import { getPlayerId } from "../shared/model/player.js";
+import type { Actor } from "../shared/actor.js";
 
-import { Room } from "../game/room";
+import { Room } from "../game/room.js";
 
 
 export type Connections = {

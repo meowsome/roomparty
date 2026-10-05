@@ -1,8 +1,8 @@
 // The various commands that can be sent to the server. These are handled in the `handleCommand` function in `game/rules.ts`.
 // They generate events that are applied to the game state in `server/room.ts` using the `applyEvent` function.
 
-import type { GameEvent } from "./event";
-import type { Vote } from "./model/game-state";
+import type { GameEvent } from "./event.js";
+import type { Vote } from "./model/game-state.js";
 
 export type Command =
     | { type: "BECOME"; role: "HOST"; desiredName: string; }

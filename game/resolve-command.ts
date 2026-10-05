@@ -1,12 +1,12 @@
 // This takes a command and an actor, and returns the resulting game events if the command is valid, or an error if it is not. 
 // It does not mutate the game state.
 
-import type { Command, CommandResult } from "../shared/command";
-import type { Actor } from "../shared/actor";
-import type { GameState, Vote } from "../shared/model/game-state";
-import { getPlayerId } from "../shared/model/player";
+import type { Command, CommandResult } from "../shared/command.js";
+import type { Actor } from "../shared/actor.js";
+import type { GameState, Vote } from "../shared/model/game-state.js";
+import { getPlayerId } from "../shared/model/player.js";
 
-import { assertNever } from "../shared/assert-never";
+import { assertNever } from "../shared/assert-never.js";
 
 export function resolveCommand(
     state: GameState,

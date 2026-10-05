@@ -1,10 +1,10 @@
 // Views must be of the types specified in ../shared/model/game-state-view.ts. 
 
-import type { GameState } from "../shared/model/game-state";
-import type { ClientGameStateView } from "../shared/model/game-state-view";
-import type { Actor } from "../shared/actor";
+import type { GameState } from "../shared/model/game-state.js";
+import type { ClientGameStateView } from "../shared/model/game-state-view.js";
+import type { Actor } from "../shared/actor.js";
 
-import { assertNever } from "../shared/assert-never";
+import { assertNever } from "../shared/assert-never.js";
 
 export function getGameStateView(
     state: GameState,

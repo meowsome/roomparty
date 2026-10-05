@@ -7,9 +7,12 @@
 
     import WordCloud from "./WordCloud.svelte";
 
-    const host = window.location.hostname;
+    const protocol = window.location.protocol === "https:"
+        ? "wss:"
+        : "ws:";
+
     const connection = new ClientWebSocketConnection(
-        `ws://${host}:8080`
+        `${protocol}//${window.location.host}/ws`,
     );
 
     let state: ClientGameStateView | null = null;

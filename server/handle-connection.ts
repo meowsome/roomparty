@@ -1,17 +1,17 @@
 // Handles the lifecycle of a connection to the server, including receiving commands, executing them, and sending back the resulting game state.
 
-import type { ServerConnection } from "../shared/connection";
-import type { Command } from "../shared/command";
-import type { Actor } from "../shared/actor";
-import { getPlayerId } from "../shared/model/player";
-import { GameEvent } from "../shared/event";
+import type { ServerConnection } from "../shared/connection.js";
+import type { Command } from "../shared/command.js";
+import type { Actor } from "../shared/actor.js";
+import { getPlayerId } from "../shared/model/player.js";
+import { GameEvent } from "../shared/event.js";
 
-import { getGameStateView } from "../game/view";
-import { applyGameEvent } from "../game/apply-event";  
+import { getGameStateView } from "../game/view.js";
+import { applyGameEvent } from "../game/apply-event.js";  
 
-import { updateConnections, addConnection, removeConnection } from "./connections";
-import { executeCommand } from "./execute-command";
-import { type Room } from "../game/room";  
+import { updateConnections, addConnection, removeConnection } from "./connections.js";
+import { executeCommand } from "./execute-command.js";
+import { type Room } from "../game/room.js";  
 
 export function handleConnection(
     connection: ServerConnection,

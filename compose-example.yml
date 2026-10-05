@@ -1,0 +1,11 @@
+# Example compose.yml
+
+services:
+  roomparty:
+    build: .
+    container_name: roomparty
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      ROOMPARTY_HOST_PASSWORD: "password123"

@@ -1,5 +1,5 @@
-import type { GamePhase, Vote, VoteOption } from "./game-state";
-import type { Player } from "./player";
+import type { GamePhase, Vote, VoteOption } from "./game-state.js";
+import type { Player } from "./player.js";
 
 
 // The state that every client can see (including unassigned clients).

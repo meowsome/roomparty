@@ -2,8 +2,8 @@
 
 import type { WebSocket } from "ws";
 
-import type { ServerConnection } from "../shared/connection";
-import type { ClientMessage, ServerMessage } from "../shared/message";
+import type { ServerConnection } from "../shared/connection.js";
+import type { ClientMessage, ServerMessage } from "../shared/message.js";
 
 export class ServerWebSocketConnection implements ServerConnection {
     constructor(private socket: WebSocket) {}

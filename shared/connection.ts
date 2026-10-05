@@ -1,4 +1,4 @@
-import type { ClientMessage, ServerMessage } from "./message";
+import type { ClientMessage, ServerMessage } from "./message.js";
 
 export interface Connection<SendMessage, ReceiveMessage>  {
 

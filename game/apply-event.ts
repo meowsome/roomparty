@@ -1,11 +1,11 @@
 // Given a game state and a game event, returns the next game state after applying the event.
 // This assumes events are valid.
 
-import type { GameEvent } from "../shared/event";
-import type { GameState } from "../shared/model/game-state";
-import { getPlayerId } from "../shared/model/player";
+import type { GameEvent } from "../shared/event.js";
+import type { GameState } from "../shared/model/game-state.js";
+import { getPlayerId } from "../shared/model/player.js";
 
-import { assertNever } from "../shared/assert-never";
+import { assertNever } from "../shared/assert-never.js";
 
 export function applyGameEvent(
     state: GameState,
