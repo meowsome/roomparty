@@ -2,8 +2,9 @@
     import type { ClientMessage } from "../../shared/message";
     import type { ClientGameStateView } from "../../shared/model/game-state-view";
 
-    import { countWords } from "./word-cloud";
     import { ClientWebSocketConnection } from "./client-connection";
+
+    import { countWords } from "./word-cloud";
 
     import WordCloud from "./WordCloud.svelte";
 
@@ -15,7 +16,8 @@
         `${protocol}//${window.location.host}/ws`,
     );
 
-    let state: ClientGameStateView | null = null;
+    let view: ClientGameStateView | null = null;
+    let revision: number = -1;
 
     let name = "";
     let selectedOptionId: string | null = null; 
@@ -23,10 +25,10 @@
     let error = ""
 
     connection.receive(message => {
-        if (message.type === "STATE") {
+        if (message.type === "VIEW") {
             // Only update the state if the revision is newer than the current state
-            if (message.state.revision > (state?.revision ?? -1)) {
-                state = message.state;
+            if (message.revision > revision) {
+                view = message.view;
                 error = ""
             }
         }
@@ -76,7 +78,7 @@
     }
 </script>
 
-{#if state}
+{#if view}
 
     {#if error}
         <div class="error">
@@ -86,7 +88,7 @@
 
     <h1>Room Party</h1>
 
-    {#if state.actor.type === "UNASSIGNED"}
+    {#if view.actor.type === "UNASSIGNED"}
         
         <!-- View when not in a game -->
         <input bind:value={name} placeholder="Name" />
@@ -95,7 +97,7 @@
             Become Player
         </button>
 
-        {#if state.host === false}
+        {#if view.host === false}
             <button onclick={becomeHost}>
                 Become Host
             </button>
@@ -108,12 +110,12 @@
             Leave
         </button>
 
-        {#if state.actor.type === "PLAYER" && "currentOptions" in state}
+        {#if view.actor.type === "PLAYER" && "currentOptions" in view}
 
-            <h2>Round {state.currentRound + 1}</h2>
+            <h2>Round {view.currentRound + 1}</h2>
 
-            {#if state.phase === "VOTING"}
-                {#each state.currentOptions as option}
+            {#if view.phase === "VOTING"}
+                {#each view.currentOptions as option}
                     <button onclick={() => selectedOptionId = option.id}>
                         <img src={option.imageLink} alt="" />
                     </button>
@@ -128,7 +130,7 @@
                     Submit
                 </button>
             
-            {:else if state.phase === "RESULTS"}
+            {:else if view.phase === "RESULTS"}
                 <p1> RESULTS PHASE </p1>
             {:else}
                 <p1> WORDCLOUD </p1>
@@ -136,30 +138,30 @@
 
         {/if}
 
-        {#if state.actor.type === "HOST" && "currentVotes" in state}
+        {#if view.actor.type === "HOST" && "currentVotes" in view}
 
-            <h2>Round {state.currentRound + 1}</h2>
+            <h2>Round {view.currentRound + 1}</h2>
 
         
-            {#if state.phase === "VOTING"}
-                {#each state.currentOptions as option}
+            {#if view.phase === "VOTING"}
+                {#each view.currentOptions as option}
                     <div>
                         <img src={option.imageLink} alt="" />
                         <p>
-                            {Object.values(state.currentVotes)
+                            {Object.values(view.currentVotes)
                                 .filter(vote => vote.optionId === option.id)
                                 .length}
                             votes
                         </p>
                     </div>
                 {/each}
-            {:else if state.phase === "RESULTS"}
+            {:else if view.phase === "RESULTS"}
                 <p1> RESULTS PHASE </p1>
             {:else}
                     
                     <WordCloud
                     words={countWords(
-                        Object.values(state.currentVotes)
+                        Object.values(view.currentVotes)
                             .map(vote => vote.freeformText)
                             .filter(text => text.trim().length > 0)
                         )}
@@ -176,7 +178,7 @@
 
     <h2>Players</h2>
 
-    {#each Object.values(state.players) as player}
+    {#each Object.values(view.players) as player}
         <p>{player.displayName}</p>
     {/each}
 {/if}

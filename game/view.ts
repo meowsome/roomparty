@@ -15,9 +15,8 @@ export function getGameStateView(
             return {
                 actor: actor,
 
-                revision: state.revision,
-                host: state.host,
                 players: state.players,
+                host: state.host,
 
                 phase: state.phase,
                 currentRound: state.currentRound,
@@ -29,10 +28,9 @@ export function getGameStateView(
         case "PLAYER":
             return {
                 actor: actor,
-
-                revision: state.revision,
-                host: state.host,
+                
                 players: state.players,
+                host: state.host,
 
                 phase: state.phase,
                 currentRound: state.currentRound,
@@ -45,9 +43,8 @@ export function getGameStateView(
             return {
                 actor: actor,
 
-                revision: state.revision,
-                host: state.host,
                 players: state.players,
+                host: state.host,
 
                 phase: state.phase,
                 currentRound: state.currentRound,

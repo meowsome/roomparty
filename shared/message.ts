@@ -8,8 +8,9 @@ export type ClientMessage =
 // Messages sent from the server to the client.
 export type ServerMessage =
     | {
-        type: "STATE";
-        state: ClientGameStateView;
+        type: "VIEW";
+        revision: number;
+        view: ClientGameStateView;
     }
     | {
         type: "ERROR";

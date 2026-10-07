@@ -26,8 +26,8 @@ export type Round = {
 
 export type GameState = {
     revision: number;
-    host: boolean;
     players: Record<string, Player>;
+    host: boolean;
 
     phase: GamePhase;
     currentRound: number;

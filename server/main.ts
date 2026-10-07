@@ -1,9 +1,9 @@
 import { WebSocketServer } from "ws";
 
 import { ServerWebSocketConnection } from "./server-connection.js";
-import { handleConnection } from "./handle-connection.js";
 import { createHttpServer } from "./http-server.js"
-import { createRoom } from "../game/room.js";
+
+import { Room } from "../game/room.js"
 
 import { readFileSync } from "node:fs";
 
@@ -21,8 +21,8 @@ if (!hostPassword) {
 const rounds = JSON.parse(
     readFileSync("./game/rounds.json", "utf8")
 );
-const room = createRoom(rounds, hostPassword);
 
+const room = new Room(rounds, hostPassword);
 
 if (production) {
     // Set up both http server and websocket server for prod.
@@ -34,7 +34,8 @@ if (production) {
 
     websocketServer.on("connection", socket => {
         const connection = new ServerWebSocketConnection(socket);
-        handleConnection(connection, room);
+        
+        room.addConnection(connection);
     });
 
     httpServer.listen(8080);
@@ -46,6 +47,7 @@ if (production) {
 
     websocketServer.on("connection", socket => {
         const connection = new ServerWebSocketConnection(socket);
-        handleConnection(connection, room);
+        
+        room.addConnection(connection);
     });
 }

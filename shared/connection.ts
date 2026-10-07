@@ -2,17 +2,17 @@ import type { ClientMessage, ServerMessage } from "./message.js";
 
 export interface Connection<SendMessage, ReceiveMessage>  {
 
-    // Send a message
     send(message: SendMessage): void;
 
-    // Set up a callback to receive messages.
-    receive(callback: (message: ReceiveMessage) => void): void;
+    receive(
+        callback: (message: ReceiveMessage) => void,
+    ): void;
 
-    // Close the connection.
+    onClose(
+        callback: () => void,
+    ): void;
+
     close(): void;
-
-    // Set up a callback to receive a close from the other side of the connection.
-    receiveClose(callback: () => void): void;
 }
 
 export type ServerConnection =
