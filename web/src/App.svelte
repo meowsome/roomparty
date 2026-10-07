@@ -43,7 +43,8 @@
         connection.send(command);
     }
 
-    function becomePlayer(): void {
+    function becomePlayer(event: any): void {
+        event.preventDefault();
         send({
             type: "BECOME",
             role: "PLAYER",
@@ -100,18 +101,18 @@
             <h1>Join Game</h1>
 
             <div class="w-1/2">
-                <form class="bg-gray-800 border-gray-200 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                <form class="bg-gray-800 border-gray-200 shadow-md rounded px-8 pt-6 pb-8 mb-4" onsubmit={becomePlayer}>
                     <div class="mb-4">
                         <label class="text-left block text-gray-500 text-sm font-bold mb-2" for="name">Name</label>
                         <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 bg-gray-500 leading-tight focus:outline-none focus:shadow-outline" bind:value={name} id="name"/>
 
                         <div class="flex flex-row pt-5">
-                            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer" onclick={becomePlayer}>
+                            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer" onclick={becomePlayer} type="button">
                                 Become Player
                             </button>
                             {#if view.host === false}
                                 &nbsp;&nbsp;
-                                <button class="bg-yellow-700 hover:bg-yellow-800 text-white font-bold py-2 px-4 rounded cursor-pointer" onclick={becomeHost}>
+                                <button class="bg-yellow-700 hover:bg-yellow-800 text-white font-bold py-2 px-4 rounded cursor-pointer" onclick={becomeHost} type="button">
                                     Become Host
                                 </button>
                             {/if}
