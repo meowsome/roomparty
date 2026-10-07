@@ -163,6 +163,7 @@ export class Room {
         this.unassignedConnections.delete(connection);
 
         if (this.hostConnection === connection) {
+            this.applyEvents(connection, [{type: "HOST_DESTROYED"}]);
             this.hostConnection = null;
         }
 
