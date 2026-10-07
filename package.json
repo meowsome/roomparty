@@ -11,11 +11,13 @@
     "server": "tsx server/main.ts"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.3.3",
     "@types/d3-cloud": "^1.2.9",
     "@types/mime-types": "^3.0.1",
     "d3-cloud": "^1.2.9",
     "mime-types": "^3.0.2",
     "svelte": "^5.57.0",
+    "tailwindcss": "^4.3.3",
     "ws": "^8.22.0"
   },
   "devDependencies": {
