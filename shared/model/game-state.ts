@@ -10,6 +10,7 @@ export type GamePhase =
 export type Vote = {
     optionId: string | null;
     freeformText: string;
+    rating: number
 };
 
 export type VoteOption = {

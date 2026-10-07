@@ -1,12 +1,12 @@
 <script lang="ts">
+
     import type { ClientMessage } from "../../shared/message";
     import type { ClientGameStateView } from "../../shared/model/game-state-view";
     import { getPlayerId } from "../../shared/model/player";
+    import type { CommandError } from "../../shared/command"
 
     import { ClientWebSocketConnection } from "./client-connection";
-
     import { countWords } from "./word-cloud";
-
     import WordCloud from "./WordCloud.svelte";
 
     const protocol = window.location.protocol === "https:"
@@ -19,23 +19,25 @@
 
     let view: ClientGameStateView | null = null;
     let revision: number = -1;
+    let error: CommandError | null = null;
 
+    
     let name = "";
     let selectedOptionId: string | null = null; 
     let freeformText = "";
-    let error = ""
+    let smellRating = 50;
 
     connection.receive(message => {
         if (message.type === "VIEW") {
             // Only update the state if the revision is newer than the current state
             if (message.revision > revision) {
                 view = message.view;
-                error = ""
+                error = null;
             }
         }
 
         if (message.type === "ERROR") {
-            error = message.error.message;
+            error = message.error;
         }
     });
 
@@ -71,121 +73,192 @@
             vote: 
             { 
                 optionId: selectedOptionId, 
-                freeformText: freeformText, 
+                freeformText: freeformText,
+                rating: smellRating
             }, 
         }); 
     }
 </script>
 
-{#if view}
+<div class="w-full min-h-screen bg-gray-900 text-white p-2">
+    {#if view}
 
-    {#if error}
-        <div class="error">
-            {error}
+        <!-- Error Banner-->
+        {#if error}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <strong class="font-bold">{error.code}</strong>
+                <span class="block sm:inline">{error.message}</span>
+            </div>
+        {/if}
+
+        <!-- Logo-->
+        <div class="mx-auto w-full text-4xl text-center my-4">
+            <p>room party</p>
         </div>
-    {/if}
 
-    <h1>Room Party</h1>
-
-    {#if view.actor.type === "UNASSIGNED"}
-        
-        <!-- View when not in a game -->
-        <input bind:value={name} placeholder="Name" />
-
-        <button onclick={becomePlayer}>
-            Become Player
-        </button>
-
-        {#if view.host === false}
-            <button onclick={becomeHost}>
-                Become Host
-            </button>
-        {/if}
-
-    {:else}
-
-        <!-- View when in a game -->
-        <button onclick={leave}>
-            Leave
-        </button>
-
-        {#if view.actor.type === "PLAYER" && "currentOptions" in view}
-
-            <h2>Round {view.currentRound + 1}</h2>
-
-            {#if view.phase === "VOTING"}
-                {#each view.currentOptions as option}
-                    <button onclick={() => selectedOptionId = option.id}>
-                        <img src={option.imageLink} alt="" />
-                    </button>
-                {/each}
-
-                <textarea
-                    bind:value={freeformText}
-                    placeholder="Your answer..."
-                ></textarea>
-
-                <button onclick={submitVote}>
-                    Submit
-                </button>
+        <!-- Name + Joining -->
+        {#if view.actor.type === "UNASSIGNED"}
             
-            {:else if view.phase === "RESULTS"}
-                <p1> RESULTS PHASE </p1>
-            {:else}
-                <p1> WORDCLOUD </p1>
-            {/if}
+            <div class="mx-auto flex max-w-md items-center justify-center gap-4 p-2">
+                <input bind:value={name} 
+                class="w-full resize-none rounded-lg bg-gray-700 p-3 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-yellow-500"
+                placeholder="Name" />
+            </div>
+            <div class="mx-auto flex max-w-md items-center justify-center gap-4 p-2">
+                <button class="w-1/2 h-12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick={becomePlayer}>
+                    Become Player
+                </button>
 
-        {/if}
-
-        {#if view.actor.type === "HOST" && "currentVotes" in view}
-
-            <h2>Round {view.currentRound + 1}</h2>
-
-        
-            {#if view.phase === "VOTING"}
-                {#each view.currentOptions as option}
-                    <div>
-                        <img src={option.imageLink} alt="" />
-                        <p>
-                            {Object.values(view.currentVotes)
-                                .filter(vote => vote.optionId === option.id)
-                                .length}
-                            votes
-                        </p>
-                    </div>
-                {/each}
-            {:else if view.phase === "RESULTS"}
-                <p1> RESULTS PHASE </p1>
-            {:else}
-                    
-                    <WordCloud
-                    words={countWords(
-                        Object.values(view.currentVotes)
-                            .map(vote => vote.freeformText)
-                            .filter(text => text.trim().length > 0)
-                        )}
-                    />
-            {/if}
-
-            <button onclick={() => send({ type: "ADVANCE_GAME" })}>
-                Advance
-            </button>
-
-        {/if}
-
-    {/if}
-
-    <h2>Players</h2>
-
-    {#each Object.values(view.players) as player}
-            <div class="flexbox">
-                <p>{player.displayName}</p>
-                {#if view.actor.type === "HOST"}
-                    <button onclick={() => send({ type: "DESTROY_PLAYER", playerId: getPlayerId(player.displayName) })}>
-                        Kick
+                {#if view.host === false}
+                    <button class="w-1/2 h-12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick={becomeHost}>
+                        Become Host
                     </button>
                 {/if}
             </div>
-        
-    {/each}
-{/if}
+
+        {:else}
+
+            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick={leave}>
+                Leave
+            </button>
+
+
+            <!-- User View -->
+            {#if view.actor.type === "PLAYER" && "currentOptions" in view}
+
+                <p class="text-2xl"> Scent #{view.currentRound + 1}</p>
+
+                {#if view.phase === "VOTING"}
+                    <div class="mx-auto w-1/2">
+                        <textarea
+                            class="w-full resize-none rounded-lg bg-gray-700 p-3 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-yellow-500"
+                            bind:value={freeformText}
+                            placeholder="Type literally anything that comes to mind"
+                            rows="4"
+                        ></textarea>
+                    </div>
+
+                    <button onclick={submitVote} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Submit
+                    </button>
+
+                    <div class = "mx-auto w-1/2">
+                        <div class="w-full flex items-center justify-between text-sm text-gray-400">
+                            <span>Smells Horrendous</span>
+                            <span>Smells Amazing</span>
+                        </div>
+
+                        <input
+                            class="w-full accent-yellow-500"
+                            type="range"
+                            min="0"
+                            max="100"
+                            bind:value={smellRating}
+                        />
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2 p-4">
+                        {#each view.currentOptions as option}
+                            <button
+                                class="rounded font-bold text-white
+                                    {option.id === selectedOptionId
+                                        ? 'bg-yellow-500 hover:bg-yellow-700'
+                                        : 'bg-gray-500 hover:bg-gray-700'}"
+                                onclick={() => selectedOptionId = option.id}
+                            >
+                                <img class = "p-1" src={option.imageLink} alt="" />
+                            </button>
+                        {/each}
+                    </div>
+                
+                {:else if view.phase === "RESULTS"}
+                    <p1> RESULTS PHASE </p1>
+                {:else}
+                    <p1> WORDCLOUD </p1>
+                {/if}
+
+            {/if}
+
+
+            <!-- Host View -->
+            {#if view.actor.type === "HOST" && "currentVotes" in view}
+
+                <h2>Scent {view.currentRound + 1}</h2>
+
+            
+                {#if view.phase === "VOTING"}
+                    <div class="grid grid-cols-6 gap-2 p-4">
+                        {#each view.currentOptions as option}
+                            <div class="overflow-hidden rounded-xl border border-gray-700 bg-gray-800">
+
+                                <!-- Image -->
+                                <img
+                                    class="block w-full p-2"
+                                    src={option.imageLink}
+                                    alt=""
+                                />
+
+                                <!-- Voters -->
+                                <div class="px-3 py-2">
+                                    {#each Object.entries(view.currentVotes) as [playerId, vote]}
+                                        {#if vote.optionId === option.id}
+                                            <div class="text-sm font-medium text-white">
+                                                {view.players[playerId].displayName}
+                                            </div>
+                                        {/if}
+                                    {/each}
+                                </div>
+
+                            </div>
+                        {/each}
+                    </div>
+                {:else if view.phase === "RESULTS"}
+                    <p1> RESULTS PHASE </p1>
+                {:else}
+                        
+                        <WordCloud
+                        words={countWords(
+                            Object.values(view.currentVotes)
+                                .map(vote => vote.freeformText)
+                                .filter(text => text.trim().length > 0)
+                            )}
+                        />
+                {/if}
+
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick={() => send({ type: "ADVANCE_GAME" })}>
+                    Advance
+                </button>
+
+            {/if}
+
+        {/if}
+
+
+        <!-- Players List -->
+        <div class="mx-auto w-full max-w-md rounded-xl bg-gray-800 p-6 my-6">
+            <h1 class="mb-3 text-xl font-bold text-white">Players</h1>
+
+            <div class="space-y-2">
+                {#each Object.values(view.players) as player}
+                    <div class="flex items-center rounded-lg bg-gray-700 px-4 py-3">
+                        <p class="flex-1 font-medium text-white">
+                            {player.displayName}
+                        </p>
+
+                        {#if view.actor.type === "HOST"}
+                            <button
+                                class="rounded bg-red-400 px-3 py-1.5 text-sm font-bold text-white hover:bg-red-600"
+                                onclick={() => send({
+                                    type: "DESTROY_PLAYER",
+                                    playerId: getPlayerId(player.displayName)
+                                })}
+                            >
+                                Kick
+                            </button>
+                        {/if}
+                    </div>
+                {/each}
+            </div>
+        </div>
+    {/if}
+</div>
