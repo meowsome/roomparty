@@ -37,8 +37,8 @@ export function resolveCommand(
                     };
             }
             
-        case "DESTROY":
-            switch(actor.type){
+        case "DESTROY_SELF":
+            switch(actor.type) {
                 case "HOST":
                         return {
                             type: "SUCCESS",
@@ -59,6 +59,19 @@ export function resolveCommand(
                         },
                     };
             }
+
+        case "DESTROY_PLAYER":
+            if(actor.type !== "HOST") {
+                return {
+                    type: "ERROR",
+                    error: {
+                        code: "NOT_A_HOST_OR_PLAYER",
+                        message: "Only the host can destroy other players.",
+                    },
+                };
+            }
+
+            return destroyPlayer(state, command.playerId);
 
         case "CAST_VOTE":
             return castVote(state, actor, command.vote);

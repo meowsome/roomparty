@@ -7,7 +7,8 @@ import type { Vote } from "./model/game-state.js";
 export type Command =
     | { type: "BECOME"; role: "HOST"; desiredName: string; }
     | { type: "BECOME"; role: "PLAYER"; desiredName: string; }
-    | { type: "DESTROY"; }
+    | { type: "DESTROY_SELF"; }
+    | { type: "DESTROY_PLAYER"; playerId: string}
 
     | { type: "CAST_VOTE"; vote: Vote; }
     | { type: "ADVANCE_GAME"; }

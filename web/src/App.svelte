@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { ClientMessage } from "../../shared/message";
     import type { ClientGameStateView } from "../../shared/model/game-state-view";
+    import { getPlayerId } from "../../shared/model/player";
 
     import { ClientWebSocketConnection } from "./client-connection";
 
@@ -60,11 +61,9 @@
 
     function leave(): void {
         send({
-            type: "DESTROY",
+            type: "DESTROY_SELF",
         });
     }
-
-
 
     function submitVote(): void { 
         send({ 
@@ -179,6 +178,14 @@
     <h2>Players</h2>
 
     {#each Object.values(view.players) as player}
-        <p>{player.displayName}</p>
+            <div class="flexbox">
+                <p>{player.displayName}</p>
+                {#if view.actor.type === "HOST"}
+                    <button onclick={() => send({ type: "DESTROY_PLAYER", playerId: getPlayerId(player.displayName) })}>
+                        Kick
+                    </button>
+                {/if}
+            </div>
+        
     {/each}
 {/if}
