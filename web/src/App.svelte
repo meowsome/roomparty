@@ -79,101 +79,118 @@
 
 {#if view}
 
-    {#if error}
-        <div class="error">
-            {error}
-        </div>
-    {/if}
+    <header>
+        <nav class="bg-gray-800 border-gray-200 px-4 lg:px-6 py-2.5">
+            <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
+                <h2>Room Party</h2>
+            </div>
+        </nav>
+    </header>
 
-    <h1>Room Party</h1>
-
-    {#if view.actor.type === "UNASSIGNED"}
-        
-        <!-- View when not in a game -->
-        <input bind:value={name} placeholder="Name" />
-
-        <button onclick={becomePlayer}>
-            Become Player
-        </button>
-
-        {#if view.host === false}
-            <button onclick={becomeHost}>
-                Become Host
-            </button>
+    <div class="justify-center items-center flex flex-col">
+        {#if error}
+            <div class="error">
+                {error}
+            </div>
         {/if}
 
-    {:else}
 
-        <!-- View when in a game -->
-        <button onclick={leave}>
-            Leave
-        </button>
+        {#if view.actor.type === "UNASSIGNED"}
+            <!-- View when not in a game -->
+            <h1>Join Game</h1>
 
-        {#if view.actor.type === "PLAYER" && "currentOptions" in view}
+            <div class="w-1/2">
+                <form class="bg-gray-800 border-gray-200 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                    <div class="mb-4">
+                        <label class="text-left block text-gray-500 text-sm font-bold mb-2" for="name">Name</label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 bg-gray-500 leading-tight focus:outline-none focus:shadow-outline" bind:value={name} id="name"/>
 
-            <h2>Round {view.currentRound + 1}</h2>
-
-            {#if view.phase === "VOTING"}
-                {#each view.currentOptions as option}
-                    <button onclick={() => selectedOptionId = option.id}>
-                        <img src={option.imageLink} alt="" />
-                    </button>
-                {/each}
-
-                <textarea
-                    bind:value={freeformText}
-                    placeholder="Your answer..."
-                ></textarea>
-
-                <button onclick={submitVote}>
-                    Submit
-                </button>
-            
-            {:else if view.phase === "RESULTS"}
-                <p1> RESULTS PHASE </p1>
-            {:else}
-                <p1> WORDCLOUD </p1>
-            {/if}
-
-        {/if}
-
-        {#if view.actor.type === "HOST" && "currentVotes" in view}
-
-            <h2>Round {view.currentRound + 1}</h2>
-
-        
-            {#if view.phase === "VOTING"}
-                {#each view.currentOptions as option}
-                    <div>
-                        <img src={option.imageLink} alt="" />
-                        <p>
-                            {Object.values(view.currentVotes)
-                                .filter(vote => vote.optionId === option.id)
-                                .length}
-                            votes
-                        </p>
+                        <div class="flex flex-row pt-5">
+                            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer" onclick={becomePlayer}>
+                                Become Player
+                            </button>
+                            {#if view.host === false}
+                                &nbsp;&nbsp;
+                                <button class="bg-yellow-700 hover:bg-yellow-800 text-white font-bold py-2 px-4 rounded cursor-pointer" onclick={becomeHost}>
+                                    Become Host
+                                </button>
+                            {/if}
+                        </div>
                     </div>
-                {/each}
-            {:else if view.phase === "RESULTS"}
-                <p1> RESULTS PHASE </p1>
-            {:else}
-                    
-                    <WordCloud
-                    words={countWords(
-                        Object.values(view.currentVotes)
-                            .map(vote => vote.freeformText)
-                            .filter(text => text.trim().length > 0)
-                        )}
-                    />
-            {/if}
+                </form>
+            </div>
 
-            <button onclick={() => send({ type: "ADVANCE_GAME" })}>
-                Advance
+        {:else}
+
+            <!-- View when in a game -->
+            <button onclick={leave}>
+                Leave
             </button>
 
-        {/if}
+            {#if view.actor.type === "PLAYER" && "currentOptions" in view}
 
-    {/if}
+                <h2>Round {view.currentRound + 1}</h2>
+
+                {#if view.phase === "VOTING"}
+                    {#each view.currentOptions as option}
+                        <button onclick={() => selectedOptionId = option.id}>
+                            <img src={option.imageLink} alt="" />
+                        </button>
+                    {/each}
+
+                    <textarea
+                        bind:value={freeformText}
+                        placeholder="Your answer..."
+                    ></textarea>
+
+                    <button onclick={submitVote}>
+                        Submit
+                    </button>
+                
+                {:else if view.phase === "RESULTS"}
+                    <p1> RESULTS PHASE </p1>
+                {:else}
+                    <p1> WORDCLOUD </p1>
+                {/if}
+
+            {/if}
+
+            {#if view.actor.type === "HOST" && "currentVotes" in view}
+
+                <h2>Round {view.currentRound + 1}</h2>
+
+            
+                {#if view.phase === "VOTING"}
+                    {#each view.currentOptions as option}
+                        <div>
+                            <img src={option.imageLink} alt="" />
+                            <p>
+                                {Object.values(view.currentVotes)
+                                    .filter(vote => vote.optionId === option.id)
+                                    .length}
+                                votes
+                            </p>
+                        </div>
+                    {/each}
+                {:else if view.phase === "RESULTS"}
+                    <p1> RESULTS PHASE </p1>
+                {:else}
+                        
+                        <WordCloud
+                        words={countWords(
+                            Object.values(view.currentVotes)
+                                .map(vote => vote.freeformText)
+                                .filter(text => text.trim().length > 0)
+                            )}
+                        />
+                {/if}
+
+                <button onclick={() => send({ type: "ADVANCE_GAME" })}>
+                    Advance
+                </button>
+            {/if}
+        {/if}
+    </div>
 
     <h2>Players</h2>
 
