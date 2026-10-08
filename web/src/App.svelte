@@ -241,7 +241,7 @@
 
 
         <!-- Players List -->
-        <div class="mx-auto w-full max-w-md rounded-xl bg-gray-800 p-6 my-6">
+        <div class="frutiger-card w-1/4 mt-5">
             <h1 class="mb-3 text-xl font-bold text-white">Players</h1>
 
             <div class="space-y-2">
