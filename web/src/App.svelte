@@ -94,6 +94,9 @@
                 
 
                 {#if view.actor.type != "UNASSIGNED"}
+                    <div class="header-right pr-2">
+                        <p>{view.gamePlayer?.displayName}</p>
+                    </div>
                     <div class="header-right">
                         <button class="frutiger-aero-button button-red" onclick={leave}>
                             Leave
