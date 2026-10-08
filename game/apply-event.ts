@@ -78,7 +78,6 @@ export function applyGameEvent(
             nextState = {
                 ...state,
                 phase: "VOTING",
-                currentRound: state.currentRound + 1,
                 players: 
                     Object.fromEntries(
                         Object.entries(state.players).map(([key, player]) => [
@@ -90,7 +89,7 @@ export function applyGameEvent(
                     )
                 }
             break;
-            
+
         case "GAME_ADVANCED":
             switch (state.phase) {
                 case "VOTING":
