@@ -89,7 +89,8 @@ export function applyGameEvent(
                         ])
                     )
                 }
-
+            break;
+            
         case "GAME_ADVANCED":
             switch (state.phase) {
                 case "VOTING":
