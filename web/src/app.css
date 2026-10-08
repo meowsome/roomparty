@@ -12,9 +12,9 @@ body {
 /* Authentic Frutiger Aero Button CSS */
 .frutiger-aero-button {
   /* OKLCH Color System for accurate colors */
-  --hue: 210;
-  --sat: 0.2;
-  --glow-intensity: 0.7;
+  --hue: 120;
+  --sat: 1;
+  --glow-intensity: 1;
 
   /* Color Variables */
   --fg: oklch(15% calc(var(--sat) * 0.5) var(--hue));
@@ -39,7 +39,7 @@ body {
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.4);
 
   /* Typography */
-  color: var(--fg);
+  color: black;
   font-family: "Lucida Grande", "Lucida Sans Unicode", "Segoe UI", system-ui, sans-serif;
   font-weight: 700;
   text-shadow: 0 2px 0.5em rgba(0, 0, 0, 0.2);
