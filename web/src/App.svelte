@@ -23,7 +23,6 @@
 
     
     let name = "";
-    let selectedOptionId: string | null = null; 
     let freeformText = "";
     let smellRating = 50;
 
@@ -71,8 +70,6 @@
         send({
             type: "ADVANCE_INPUT_PAGE",
         });
-
-        // TODO REMOVE selectedOptionId 
 
         send({ 
             type: "CAST_VOTE", 
@@ -176,11 +173,7 @@
                                 <div class="grid grid-cols-3 gap-2 p-4">
                                     {#each view.currentOptions as option}
                                         <button
-                                            class="rounded font-bold text-white
-                                                {option.id === selectedOptionId
-                                                    ? 'bg-yellow-500 hover:bg-yellow-700'
-                                                    : 'bg-gray-500 hover:bg-gray-700'}"
-                                            onclick={() => submitVote(option.id)}
+                                            class="rounded font-bold text-white" onclick={() => submitVote(option.id)}
                                         >
                             <!-- <button onclick={submitVote} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                 Submit
