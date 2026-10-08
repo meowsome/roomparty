@@ -75,6 +75,9 @@ export function resolveCommand(
 
         case "CAST_VOTE":
             return castVote(state, actor, command.vote);
+        case "NEXT_INPUT_PAGE":
+            return nextInputPage(state, actor);
+
         case "ADVANCE_GAME":
             return advanceGame(state, actor);
 
@@ -93,6 +96,16 @@ function becomePlayer(state: GameState, desiredName: string): CommandResult {
             error: {
                 code: "INVALID_NAME",
                 message: "Player name cannot be empty.",
+            },
+        };
+    }
+
+    if (desiredName.length > 16) {
+        return {
+            type: "ERROR",
+            error: {
+                code: "INVALID_NAME",
+                message: "Player name must be at most 16 characters.",
             },
         };
     }
@@ -131,6 +144,7 @@ function becomePlayer(state: GameState, desiredName: string): CommandResult {
                 type: "PLAYER_BECAME",
                 player: {
                     displayName: cleanDesiredName,
+                    inputPhase: 0,
                 },
             },
         ],
@@ -181,6 +195,17 @@ function castVote(state: GameState, actor: Actor, vote: Vote): CommandResult {
         };
     }
 
+    if (vote.rating > 100 || vote.rating < 0) {
+        return {
+            type: "ERROR",
+            error: {
+                code: "INVALID_RATING",
+                message: "The rating must be between 0 and 100.",
+            },
+        };
+    }
+
+
     return {
         type: "SUCCESS",
         events: [
@@ -192,6 +217,53 @@ function castVote(state: GameState, actor: Actor, vote: Vote): CommandResult {
         ]
     };
 
+}
+
+function nextInputPage(
+    state: GameState,
+    actor: Actor,
+): CommandResult {
+    
+    if (actor.type !== "PLAYER") {
+        return {
+            type: "ERROR",
+            error: {
+                code: "NOT_A_PLAYER",
+                message: "Only the player can go to the next input page.",
+            },
+        };
+    }
+
+    if (state.phase !== "VOTING") {
+        return {
+            type: "ERROR",
+            error: {
+                code: "NOT_VOTING_PHASE",
+                message: "You can only advance the input page in the voting phase.",
+            },
+        };
+    }
+
+    if (state.players[actor.playerId].inputPhase >= 2)
+    {
+        return {
+            type: "ERROR",
+            error: {
+                code: "END_OF_INPUT_PAGES",
+                message: "You are at the end of the pages.",
+            },
+        };
+    }
+
+    return {
+        type: "SUCCESS",
+        events: [
+            {
+                type: "INPUT_PAGE_ADVANCED",
+                playerId: actor.playerId
+            }
+        ]
+    }
 }
 
 function advanceGame(

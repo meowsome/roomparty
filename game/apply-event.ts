@@ -3,7 +3,7 @@
 
 import type { GameEvent } from "../shared/event.js";
 import type { GameState } from "../shared/model/game-state.js";
-import { getPlayerId } from "../shared/model/player.js";
+import { getPlayerId, Player } from "../shared/model/player.js";
 
 import { assertNever } from "../shared/assert-never.js";
 
@@ -74,6 +74,22 @@ export function applyGameEvent(
             };
             break;
 
+        case "INPUT_PAGE_ADVANCED":
+            nextState = {
+                ...state,
+                phase: "VOTING",
+                currentRound: state.currentRound + 1,
+                players: 
+                    Object.fromEntries(
+                        Object.entries(state.players).map(([key, player]) => [
+                            key,
+                            getPlayerId(player.displayName) === event.playerId 
+                                ? {...player, inputPhase: player.inputPhase + 1}
+                                : player
+                        ])
+                    )
+                }
+
         case "GAME_ADVANCED":
             switch (state.phase) {
                 case "VOTING":
@@ -93,7 +109,15 @@ export function applyGameEvent(
                         ...state,
                         phase: "VOTING",
                         currentRound: state.currentRound + 1,
-                    };
+                        players: 
+                            Object.fromEntries(
+                                Object.entries(state.players).map(([key, player]) => [
+                                    key,
+                                    // Reset the input phase back to 0 on a new round
+                                    { ...player, inputPhase: 0 },
+                                ])
+                            )
+                        }
                     break;
                 default:
                     return assertNever(state.phase);

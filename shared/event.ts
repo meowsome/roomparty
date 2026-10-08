@@ -26,5 +26,9 @@ export type GameEvent =
         vote: Vote;
     }
     | {
+        type: "INPUT_PAGE_ADVANCED";
+        playerId: string;
+    }
+    | {
         type: "GAME_ADVANCED";
     };
