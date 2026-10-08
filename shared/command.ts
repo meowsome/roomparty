@@ -11,7 +11,7 @@ export type Command =
     | { type: "DESTROY_PLAYER"; playerId: string}
 
     | { type: "CAST_VOTE"; vote: Vote; }
-    | { type: "NEXT_INPUT_PAGE"; }
+    | { type: "ADVANCE_INPUT_PAGE"; }
     | { type: "ADVANCE_GAME"; }
 
 export type CommandError = {

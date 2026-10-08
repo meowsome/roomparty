@@ -37,6 +37,7 @@ export function getGameStateView(
 
                 currentOptions: state.rounds[state.currentRound].options,
                 currentVote: state.rounds[state.currentRound].votes[actor.playerId] ?? null,
+                gamePlayer: state.players[actor.playerId]
             };
 
         case "UNASSIGNED":

@@ -24,6 +24,7 @@ export type PlayerGameStateView = BaseGameStateView & {
     actor: Extract<Actor, { type: "PLAYER" }>;
     currentOptions: VoteOption[]; // The options available to the player in the current round.
     currentVote: Vote | null; // The player's own vote, if they have cast one.
+    gamePlayer: Player; // The player's game identity.
 };
 
 // Information that an unassigned player can see.

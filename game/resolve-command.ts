@@ -75,9 +75,8 @@ export function resolveCommand(
 
         case "CAST_VOTE":
             return castVote(state, actor, command.vote);
-        case "NEXT_INPUT_PAGE":
-            return nextInputPage(state, actor);
-
+        case "ADVANCE_INPUT_PAGE":
+            return advanceInputPage(state, actor);
         case "ADVANCE_GAME":
             return advanceGame(state, actor);
 
@@ -219,7 +218,7 @@ function castVote(state: GameState, actor: Actor, vote: Vote): CommandResult {
 
 }
 
-function nextInputPage(
+function advanceInputPage(
     state: GameState,
     actor: Actor,
 ): CommandResult {
