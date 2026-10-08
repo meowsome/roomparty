@@ -82,6 +82,23 @@
 
 <div class="w-full min-h-screen text-white p-2 flex flex-col items-center justify-center">
     {#if view}
+        <header class="frutiger-card">
+            <nav>
+                <!-- Logo-->
+                <div class="header-left">
+                    <h1>room party</h1>
+                </div>
+                
+
+                {#if view.actor.type != "UNASSIGNED"}
+                    <div class="header-right">
+                        <button class="frutiger-aero-button button-red" onclick={leave}>
+                            Leave
+                        </button>
+                    </div>
+                {/if}
+            </nav>
+        </header>
 
         <!-- Error Banner-->
         {#if error}
@@ -91,14 +108,9 @@
             </div>
         {/if}
 
-        <!-- Logo-->
-        <div class="mx-auto w-full text-4xl text-center my-4">
-            <p>room party</p>
-        </div>
-
         <!-- Name + Joining -->
         {#if view.actor.type === "UNASSIGNED"}
-            <div class="frutiger-card w-full md:w-1/2">
+            <div class="frutiger-card frutiger-card-rounded w-full md:w-1/2">
                 <div class="mx-auto flex max-w-md items-center justify-center gap-4 p-2">
                     <input bind:value={name} 
                     class="w-full resize-none rounded-lg bg-gray-700 p-3 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-yellow-500"
@@ -118,17 +130,11 @@
             </div>
 
         {:else}
-
-            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick={leave}>
-                Leave
-            </button>
-
-
             <!-- User View -->
             {#if view.actor.type === "PLAYER" && "currentOptions" in view}
-                <div class="frutiger-card w-full md:w-3/4">
+                <div class="frutiger-card frutiger-card-rounded w-full md:w-3/4">
                     <p class="text-2xl"> Scent #{view.currentRound + 1}</p>
-
+     
                     {#if view.phase === "VOTING"}
                         <div class="mx-auto w-1/2">
                             <textarea
@@ -190,7 +196,7 @@
             
                 
                 {#if view.phase === "VOTING"}
-                    <div class="frutiger-card w-full md:w-3/4">
+                    <div class="frutiger-card frutiger-card-rounded w-full md:w-3/4">
                         <div class="grid grid-cols-6 gap-2 p-4">
                             {#each view.currentOptions as option}
                                 <div class="overflow-hidden rounded-xl border border-gray-700 bg-gray-800">
@@ -220,7 +226,7 @@
                 {:else if view.phase === "RESULTS"}
                     <p1> RESULTS PHASE </p1>
                 {:else}
-                    <div class="frutiger-card w-full md:w-3/4">
+                    <div class="frutiger-card frutiger-card-rounded w-full md:w-3/4">
                         <WordCloud
                         words={countWords(
                             Object.values(view.currentVotes)
@@ -241,8 +247,8 @@
 
 
         <!-- Players List -->
-        <div class="frutiger-card w-1/4 mt-5">
-            <h1 class="mb-3 text-xl font-bold text-white">Players</h1>
+        <div class="frutiger-card frutiger-card-rounded w-1/4 mt-5">
+            <h2>Players</h2>
 
             <div class="space-y-2">
                 {#each Object.values(view.players) as player}

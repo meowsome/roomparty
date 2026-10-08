@@ -7,6 +7,7 @@ body {
     font-family: "Lucida Grande", "Lucida Sans Unicode", "Segoe UI", system-ui, sans-serif;
     font-weight: 700;
     text-shadow: 0 2px 0.5em rgba(0, 0, 0, 0.2);
+    margin-top: 7em;
 }
 
 /* Authentic Frutiger Aero Button CSS */
@@ -56,6 +57,10 @@ body {
   padding: 0.5em;
 }
 
+.button-red {
+    --hue: 10!important;
+}
+
 /* Diagonal Glass Shine Sweep — the classic Web 2.0 glare streak */
 .frutiger-aero-button::before {
   content: "";
@@ -92,6 +97,10 @@ body {
 
 .frutiger-card {
     filter: drop-shadow(5px 5px 10px #000000);
+}
+
+.frutiger-card-rounded {
+    border-radius: 1em;
     border: 2px solid white;
 }
 
@@ -99,8 +108,7 @@ body {
   .frutiger-card {
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
-    background-color: rgba(255, 255, 255, 0.25);
-    border-radius: 2.5em;
+    background-color: rgba(100, 128, 255, 0.25);
   }
 
   .warning {
@@ -147,4 +155,33 @@ textarea {
     background: white;
     color: black;
     border: 1px solid white;
+}
+
+header {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    justify-content: flex-end;
+    padding: 0.5em 2em;
+}
+
+.header-left {
+    margin-right: auto;
+}
+
+h1 {
+    font-size: 3rem;
+}
+
+h2 {
+    font-size: 2rem;
 }
