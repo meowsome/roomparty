@@ -80,7 +80,7 @@
     }
 </script>
 
-<div class="w-full min-h-screen text-white p-2">
+<div class="w-full min-h-screen text-white p-2 flex flex-col items-center justify-center">
     {#if view}
 
         <!-- Error Banner-->
@@ -98,22 +98,23 @@
 
         <!-- Name + Joining -->
         {#if view.actor.type === "UNASSIGNED"}
-            
-            <div class="mx-auto flex max-w-md items-center justify-center gap-4 p-2">
-                <input bind:value={name} 
-                class="w-full resize-none rounded-lg bg-gray-700 p-3 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-yellow-500"
-                placeholder="Name" />
-            </div>
-            <div class="mx-auto flex max-w-md items-center justify-center gap-4 p-2">
-                <button class="frutiger-aero-button" onclick={becomePlayer}>
-                    Become Player
-                </button>
-
-                {#if view.host === false}
-                    <button class="frutiger-aero-button" onclick={becomeHost}>
-                        Become Host
+            <div class="frutiger-card w-full md:w-1/2">
+                <div class="mx-auto flex max-w-md items-center justify-center gap-4 p-2">
+                    <input bind:value={name} 
+                    class="w-full resize-none rounded-lg bg-gray-700 p-3 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-yellow-500"
+                    placeholder="Name" />
+                </div>
+                <div class="mx-auto flex max-w-md items-center justify-center gap-4 p-2">
+                    <button class="frutiger-aero-button" onclick={becomePlayer}>
+                        Become Player
                     </button>
-                {/if}
+
+                    {#if view.host === false}
+                        <button class="frutiger-aero-button" onclick={becomeHost}>
+                            Become Host
+                        </button>
+                    {/if}
+                </div>
             </div>
 
         {:else}
@@ -125,58 +126,59 @@
 
             <!-- User View -->
             {#if view.actor.type === "PLAYER" && "currentOptions" in view}
+                <div class="frutiger-card w-full md:w-3/4">
+                    <p class="text-2xl"> Scent #{view.currentRound + 1}</p>
 
-                <p class="text-2xl"> Scent #{view.currentRound + 1}</p>
-
-                {#if view.phase === "VOTING"}
-                    <div class="mx-auto w-1/2">
-                        <textarea
-                            class="w-full resize-none rounded-lg bg-gray-700 p-3 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-yellow-500"
-                            bind:value={freeformText}
-                            placeholder="Type literally anything that comes to mind"
-                            rows="4"
-                        ></textarea>
-                    </div>
-
-                    <button onclick={submitVote} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                        Submit
-                    </button>
-
-                    <div class = "mx-auto w-1/2">
-                        <div class="w-full flex items-center justify-between text-sm text-gray-400">
-                            <span>Smells Horrendous</span>
-                            <span>Smells Amazing</span>
+                    {#if view.phase === "VOTING"}
+                        <div class="mx-auto w-1/2">
+                            <textarea
+                                class="w-full resize-none rounded-lg bg-gray-700 p-3 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-yellow-500"
+                                bind:value={freeformText}
+                                placeholder="Type literally anything that comes to mind"
+                                rows="4"
+                            ></textarea>
                         </div>
 
-                        <input
-                            class="w-full accent-yellow-500"
-                            type="range"
-                            min="0"
-                            max="100"
-                            bind:value={smellRating}
-                        />
-                    </div>
+                        <button onclick={submitVote} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            Submit
+                        </button>
 
-                    <div class="grid grid-cols-3 gap-2 p-4">
-                        {#each view.currentOptions as option}
-                            <button
-                                class="rounded font-bold text-white
-                                    {option.id === selectedOptionId
-                                        ? 'bg-yellow-500 hover:bg-yellow-700'
-                                        : 'bg-gray-500 hover:bg-gray-700'}"
-                                onclick={() => selectedOptionId = option.id}
-                            >
-                                <img class = "p-1" src={option.imageLink} alt="" />
-                            </button>
-                        {/each}
-                    </div>
-                
-                {:else if view.phase === "RESULTS"}
-                    <p1> RESULTS PHASE </p1>
-                {:else}
-                    <p1> WORDCLOUD </p1>
-                {/if}
+                        <div class = "mx-auto w-1/2">
+                            <div class="w-full flex items-center justify-between text-sm text-gray-400">
+                                <span>Smells Horrendous</span>
+                                <span>Smells Amazing</span>
+                            </div>
 
+                            <input
+                                class="w-full accent-yellow-500"
+                                type="range"
+                                min="0"
+                                max="100"
+                                bind:value={smellRating}
+                            />
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2 p-4">
+                            {#each view.currentOptions as option}
+                                <button
+                                    class="rounded font-bold text-white
+                                        {option.id === selectedOptionId
+                                            ? 'bg-yellow-500 hover:bg-yellow-700'
+                                            : 'bg-gray-500 hover:bg-gray-700'}"
+                                    onclick={() => selectedOptionId = option.id}
+                                >
+                                    <img class = "p-1" src={option.imageLink} alt="" />
+                                </button>
+                            {/each}
+                        </div>
+                    
+                    {:else if view.phase === "RESULTS"}
+                        <p1> RESULTS PHASE </p1>
+                    {:else}
+                        <p1> WORDCLOUD </p1>
+                    {/if}
+
+                </div>
             {/if}
 
 
@@ -186,36 +188,39 @@
                 <h2>Scent {view.currentRound + 1}</h2>
 
             
+                
                 {#if view.phase === "VOTING"}
-                    <div class="grid grid-cols-6 gap-2 p-4">
-                        {#each view.currentOptions as option}
-                            <div class="overflow-hidden rounded-xl border border-gray-700 bg-gray-800">
+                    <div class="frutiger-card w-full md:w-3/4">
+                        <div class="grid grid-cols-6 gap-2 p-4">
+                            {#each view.currentOptions as option}
+                                <div class="overflow-hidden rounded-xl border border-gray-700 bg-gray-800">
 
-                                <!-- Image -->
-                                <img
-                                    class="block w-full p-2"
-                                    src={option.imageLink}
-                                    alt=""
-                                />
+                                    <!-- Image -->
+                                    <img
+                                        class="block w-full p-2"
+                                        src={option.imageLink}
+                                        alt=""
+                                    />
 
-                                <!-- Voters -->
-                                <div class="px-3 py-2">
-                                    {#each Object.entries(view.currentVotes) as [playerId, vote]}
-                                        {#if vote.optionId === option.id}
-                                            <div class="text-sm font-medium text-white">
-                                                {view.players[playerId]?.displayName}
-                                            </div>
-                                        {/if}
-                                    {/each}
+                                    <!-- Voters -->
+                                    <div class="px-3 py-2">
+                                        {#each Object.entries(view.currentVotes) as [playerId, vote]}
+                                            {#if vote.optionId === option.id}
+                                                <div class="text-sm font-medium text-white">
+                                                    {view.players[playerId]?.displayName}
+                                                </div>
+                                            {/if}
+                                        {/each}
+                                    </div>
+
                                 </div>
-
-                            </div>
-                        {/each}
+                            {/each}
+                        </div>
                     </div>
                 {:else if view.phase === "RESULTS"}
                     <p1> RESULTS PHASE </p1>
                 {:else}
-                        
+                    <div class="frutiger-card w-full md:w-3/4">
                         <WordCloud
                         words={countWords(
                             Object.values(view.currentVotes)
@@ -223,6 +228,7 @@
                                 .filter(text => text.trim().length > 0)
                             )}
                         />
+                    </div>
                 {/if}
 
                 <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick={() => send({ type: "ADVANCE_GAME" })}>
