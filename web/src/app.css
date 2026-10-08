@@ -140,3 +140,11 @@ body {
   z-index: -1;
 }
 
+
+input,
+textarea {
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.75) inset;
+    background: white;
+    color: black;
+    border: 1px solid white;
+}
