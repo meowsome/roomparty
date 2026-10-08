@@ -27,8 +27,12 @@
     let freeformText = "";
     let smellRating = 50;
 
+    let votingPhase = 0;
+
     connection.receive(message => {
         if (message.type === "VIEW") {
+            if (message.view.phase == "VOTING") votingPhase = 0;
+            
             // Only update the state if the revision is newer than the current state
             if (message.revision > revision) {
                 view = message.view;
@@ -67,7 +71,9 @@
         });
     }
 
-    function submitVote(): void { 
+    function submitVote(optionId: string): void { 
+        votingPhase = 2;
+        selectedOptionId = optionId;
         send({ 
             type: "CAST_VOTE", 
             vote: 
@@ -134,50 +140,53 @@
             {#if view.actor.type === "PLAYER" && "currentOptions" in view}
                 <div class="frutiger-card frutiger-card-rounded w-full md:w-3/4">
                     <p class="text-2xl"> Scent #{view.currentRound + 1}</p>
-     
                     {#if view.phase === "VOTING"}
-                        <div class="mx-auto w-1/2">
-                            <textarea
-                                class="w-full resize-none rounded-lg bg-gray-700 p-3 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-yellow-500"
-                                bind:value={freeformText}
-                                placeholder="Type literally anything that comes to mind"
-                                rows="4"
-                            ></textarea>
-                        </div>
-
-                        <button onclick={submitVote} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Submit
-                        </button>
-
-                        <div class = "mx-auto w-1/2">
-                            <div class="w-full flex items-center justify-between text-sm text-gray-400">
-                                <span>Smells Horrendous</span>
-                                <span>Smells Amazing</span>
+                        {#if votingPhase == 0}
+                            <div class="mx-auto w-1/2">
+                                <textarea
+                                    class="w-full resize-none rounded-lg bg-gray-700 p-3 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-yellow-500"
+                                    bind:value={freeformText}
+                                    placeholder="Type literally anything that comes to mind"
+                                    rows="4"
+                                ></textarea>
                             </div>
 
-                            <input
-                                class="w-full accent-yellow-500"
-                                type="range"
-                                min="0"
-                                max="100"
-                                bind:value={smellRating}
-                            />
-                        </div>
+                            <div class = "mx-auto w-1/2">
+                                <div class="w-full flex items-center justify-between text-sm text-gray-400">
+                                    <span>Smells Horrendous</span>
+                                    <span>Smells Amazing</span>
+                                </div>
 
-                        <div class="grid grid-cols-3 gap-2 p-4">
-                            {#each view.currentOptions as option}
-                                <button
-                                    class="rounded font-bold text-white
-                                        {option.id === selectedOptionId
-                                            ? 'bg-yellow-500 hover:bg-yellow-700'
-                                            : 'bg-gray-500 hover:bg-gray-700'}"
-                                    onclick={() => selectedOptionId = option.id}
-                                >
-                                    <img class = "p-1" src={option.imageLink} alt="" />
-                                </button>
-                            {/each}
-                        </div>
-                    
+                                <input
+                                    class="w-full accent-yellow-500"
+                                    type="range"
+                                    min="0"
+                                    max="100"
+                                    bind:value={smellRating}
+                                />
+                            </div>
+
+                            <button class="frutiger-aero-button" onclick={() => votingPhase = 1}>Next</button>
+                        {:else if votingPhase == 1}
+                            <div class="grid grid-cols-3 gap-2 p-4">
+                                {#each view.currentOptions as option}
+                                    <button
+                                        class="rounded font-bold text-white
+                                            {option.id === selectedOptionId
+                                                ? 'bg-yellow-500 hover:bg-yellow-700'
+                                                : 'bg-gray-500 hover:bg-gray-700'}"
+                                        onclick={() => submitVote(option.id)}
+                                    >
+                        <!-- <button onclick={submitVote} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            Submit
+                        </button> -->
+                                        <img class = "p-1" src={option.imageLink} alt="" />
+                                    </button>
+                                {/each}
+                            </div>
+                        {:else if votingPhase == 2}
+                            Meow you submitted now plsz please wait
+                        {/if}
                     {:else if view.phase === "RESULTS"}
                         <p1> RESULTS PHASE </p1>
                     {:else}
