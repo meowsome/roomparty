@@ -105,12 +105,12 @@
                 placeholder="Name" />
             </div>
             <div class="mx-auto flex max-w-md items-center justify-center gap-4 p-2">
-                <button class="w-1/2 h-12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick={becomePlayer}>
+                <button class="frutiger-aero-button" onclick={becomePlayer}>
                     Become Player
                 </button>
 
                 {#if view.host === false}
-                    <button class="w-1/2 h-12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick={becomeHost}>
+                    <button class="frutiger-aero-button" onclick={becomeHost}>
                         Become Host
                     </button>
                 {/if}
