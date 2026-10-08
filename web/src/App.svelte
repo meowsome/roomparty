@@ -203,7 +203,7 @@
                                     {#each Object.entries(view.currentVotes) as [playerId, vote]}
                                         {#if vote.optionId === option.id}
                                             <div class="text-sm font-medium text-white">
-                                                {view.players[playerId].displayName}
+                                                {view.players[playerId]?.displayName}
                                             </div>
                                         {/if}
                                     {/each}
