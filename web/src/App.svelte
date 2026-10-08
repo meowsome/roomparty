@@ -80,6 +80,9 @@
                 rating: smellRating
             }, 
         }); 
+
+        freeformText = "";
+        smellRating = 50;
     }
 </script>
 
