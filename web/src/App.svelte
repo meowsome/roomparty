@@ -27,12 +27,8 @@
     let freeformText = "";
     let smellRating = 50;
 
-    let votingPhase = 0;
-
     connection.receive(message => {
-        if (message.type === "VIEW") {
-            if (message.view.phase == "VOTING") votingPhase = 0;
-            
+        if (message.type === "VIEW") {            
             // Only update the state if the revision is newer than the current state
             if (message.revision > revision) {
                 view = message.view;
@@ -72,13 +68,17 @@
     }
 
     function submitVote(optionId: string): void { 
-        votingPhase = 2;
-        selectedOptionId = optionId;
+        send({
+            type: "ADVANCE_INPUT_PAGE",
+        });
+
+        // TODO REMOVE selectedOptionId 
+
         send({ 
             type: "CAST_VOTE", 
             vote: 
             { 
-                optionId: selectedOptionId, 
+                optionId: optionId, 
                 freeformText: freeformText,
                 rating: smellRating
             }, 
@@ -142,7 +142,7 @@
                     <div class="p-4">
                         <p class="text-2xl"> Scent #{view.currentRound + 1}</p>
                         {#if view.phase === "VOTING"}
-                            {#if votingPhase == 0}
+                            {#if view.gamePlayer.inputPhase == 0}
                                 <p>Describe the scent and rate it with the slider</p>
                                 <div class="mx-auto w-1/2 pt-5">
                                     <textarea
@@ -168,8 +168,10 @@
                                     />
                                 </div>
 
-                                <button class="frutiger-aero-button float-right" onclick={() => votingPhase = 1}>Next</button>
-                            {:else if votingPhase == 1}
+                                <button class="frutiger-aero-button float-right" onclick={() => send({
+                                    type: "ADVANCE_INPUT_PAGE",
+                                })}>Next</button>
+                            {:else if view.gamePlayer.inputPhase == 1}
                                 <p>Pick the image that you think most closely represents the scent</p>
                                 <div class="grid grid-cols-3 gap-2 p-4">
                                     {#each view.currentOptions as option}
@@ -187,7 +189,7 @@
                                         </button>
                                     {/each}
                                 </div>
-                            {:else if votingPhase == 2}
+                            {:else if view.gamePlayer.inputPhase == 2}
                                 Meow you submitted now plsz please wait
                             {/if}
                         {:else if view.phase === "RESULTS"}
