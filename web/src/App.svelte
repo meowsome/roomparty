@@ -168,7 +168,7 @@
                                     </div>
 
                                     <input
-                                        class="w-full accent-yellow-500"
+                                        class="w-full accent-yellow-500 frutiger-aero-range"
                                         type="range"
                                         min="0"
                                         max="100"
