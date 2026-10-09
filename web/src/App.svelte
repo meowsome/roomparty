@@ -266,7 +266,7 @@
 
         <!-- Players List -->
         <div class="frutiger-card frutiger-card-rounded w-1/4 mt-5">
-            <h2>Players</h2>
+            <h2>players</h2>
 
             <div class="space-y-2">
                 {#each Object.values(view.players) as player}
