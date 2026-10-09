@@ -238,3 +238,8 @@ input[type="range"].frutiger-aero-range::-moz-range-thumb {
 .float-right {
     float: right;
 }
+
+.buddy-img {
+  width: 3em;
+  padding-right: 0.5em;
+}

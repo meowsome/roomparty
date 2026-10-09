@@ -266,28 +266,31 @@
 
         <!-- Players List -->
         <div class="frutiger-card frutiger-card-rounded w-1/4 mt-5">
-            <h2>players</h2>
+            <div class="p-3">
+                <h2>players</h2>
 
-            <div class="space-y-2">
-                {#each Object.values(view.players) as player}
-                    <div class="flex items-center rounded-lg bg-gray-700 px-4 py-3">
-                        <p class="flex-1 font-medium text-white">
-                            {player.displayName}
-                        </p>
+                <div class="space-y-2">
+                    {#each Object.values(view.players) as player}
+                        <div class="flex items-center player-list-item">
+                            <p class="flex-1 font-medium text-white flex flex-row justify-left items-center">
+                                <img class="buddy-img" src="images/Buddy bleu.png">
+                                {player.displayName}
+                            </p>
 
-                        {#if view.actor.type === "HOST"}
-                            <button
-                                class="rounded bg-red-400 px-3 py-1.5 text-sm font-bold text-white hover:bg-red-600"
-                                onclick={() => send({
-                                    type: "DESTROY_PLAYER",
-                                    playerId: getPlayerId(player.displayName)
-                                })}
-                            >
-                                Kick
-                            </button>
-                        {/if}
-                    </div>
-                {/each}
+                            {#if view.actor.type === "HOST"}
+                                <button
+                                    class="rounded bg-red-400 px-3 py-1.5 text-sm font-bold text-white hover:bg-red-600"
+                                    onclick={() => send({
+                                        type: "DESTROY_PLAYER",
+                                        playerId: getPlayerId(player.displayName)
+                                    })}
+                                >
+                                    Kick
+                                </button>
+                            {/if}
+                        </div>
+                    {/each}
+                </div>
             </div>
         </div>
     {/if}
