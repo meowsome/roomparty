@@ -111,9 +111,14 @@
 
         <!-- Error Banner-->
         {#if error}
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                <strong class="font-bold">{error.code}</strong>
-                <span class="block sm:inline">{error.message}</span>
+            <div class="frutiger-card frutiger-card-rounded frutiger-card-red w-full md:w-1/2 mb-3">
+                <div class="p-3 flex flex-col">
+                    <div class="flex flex-row justify-start items-center">
+                        <img style="width:3em;" src="images/error-button.svg">
+                        <strong class="font-bold">{error.code}</strong>
+                    </div>
+                    <span class="block sm:inline">{error.message}</span>
+                </div>
             </div>
         {/if}
 

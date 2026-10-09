@@ -104,6 +104,10 @@ body {
     border: 2px solid white;
 }
 
+.frutiger-card-red {
+    background-color: rgba(255, 0, 0, 0.25)!important;
+}
+
 @supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
   .frutiger-card {
     -webkit-backdrop-filter: blur(10px);
