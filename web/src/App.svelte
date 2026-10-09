@@ -197,6 +197,7 @@
                                 {/if}
                             {:else if view.phase === "RESULTS"}
                                 <p1> RESULTS PHASE </p1>
+                                <img class="results-image" src="images/butterflies.webp">
                             {:else}
                                 <p1> WORDCLOUD </p1>
                             {/if}

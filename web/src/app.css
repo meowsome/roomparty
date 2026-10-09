@@ -241,3 +241,7 @@ input[type="range"].frutiger-aero-range::-moz-range-thumb {
   width: 3em;
   padding-right: 0.5em;
 }
+
+.results-image {
+  width: 10em;
+}
