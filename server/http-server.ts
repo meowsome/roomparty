@@ -16,7 +16,7 @@ export function createHttpServer() {
             "http://localhost",
         ).pathname;
 
-        // Serve index.html as the root file, otherwise
+        // Serve index.html as the root file
         const filePath = join(
             webRoot,
             path === "/" ? "index.html" : path,

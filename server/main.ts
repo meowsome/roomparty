@@ -3,7 +3,9 @@ import { WebSocketServer } from "ws";
 import { ServerWebSocketConnection } from "./server-connection.js";
 import { createHttpServer } from "./http-server.js"
 
-import { Room } from "../game/room.js"
+import { Room } from "./room.js"
+
+import { EventLog } from "./event-logger.js"
 
 import { readFileSync } from "node:fs";
 
@@ -22,7 +24,11 @@ const rounds = JSON.parse(
     readFileSync("./game/rounds.json", "utf8")
 );
 
-const room = new Room(rounds, hostPassword);
+const eventLog = new EventLog(
+    `data/sessions/${crypto.randomUUID()}.jsonl`
+);
+
+const room = new Room(rounds, hostPassword, eventLog);
 
 if (production) {
     // Set up both http server and websocket server for prod.

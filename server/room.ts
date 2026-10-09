@@ -9,14 +9,16 @@ import { GameEvent } from "../shared/event.js";
 
 import { getPlayerId } from "../shared/model/player.js";
 
-import { resolveCommand } from "./resolve-command.js";
-import { applyGameEvent } from "./apply-event.js";
-import { getGameStateView } from "./view.js";
-import { ClientGameStateView } from "../shared/model/game-state-view.js";
+import { resolveCommand } from "../game/resolve-command.js";
+import { applyGameEvent } from "../game/apply-event.js";
+import { getGameStateView } from "../game/view.js";
+
+import { EventLog } from "./event-logger.js"
 
 export class Room {
     gameState: GameState;
     hostPassword: string;
+    eventLog: EventLog;
 
     private hostConnection: ServerConnection | null = null;
     private unassignedConnections = new Set<ServerConnection>();
@@ -24,7 +26,7 @@ export class Room {
 
     private lastViewKey = new Map<ServerConnection, string>(); // for deduplication
 
-    constructor(rounds: any, hostPassword: string)
+    constructor(rounds: any, hostPassword: string, eventLog: EventLog)
     {
         // Initialize game state
         this.gameState = {
@@ -39,6 +41,7 @@ export class Room {
         };
 
         this.hostPassword = hostPassword;
+        this.eventLog = eventLog;
     }
 
     // Handles the actual message from a connection.
@@ -99,6 +102,9 @@ export class Room {
         for (const event of events) {
             // Purely functional game state update
             this.gameState = applyGameEvent(this.gameState, event);
+
+            // Log event to file
+            this.eventLog.append(event);
 
             // Imperative room update
             this.applyRoomEvent(connection, event)
