@@ -8,7 +8,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 body {
-    background-image: url("images/background.png");
+    background-image: url("/images/background.png");
     background-size: cover;
     background-attachment: fixed;
     color: var(--fg);
@@ -216,7 +216,7 @@ input[type="range"].frutiger-aero-range::-webkit-slider-thumb {
   width: 50px;                     /* Adjust to match your image size */
   height: 50px;                    /* Adjust to match your image size */
   cursor: pointer;
-  background-image: url('images/clownfish.png'); 
+  background-image: url('/images/clownfish.png'); 
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -229,7 +229,7 @@ input[type="range"].frutiger-aero-range::-moz-range-thumb {
   width: 50px;
   height: 50px;
   cursor: pointer;
-  background-image: url('images/clownfish.png');
+  background-image: url('/images/clownfish.png');
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;

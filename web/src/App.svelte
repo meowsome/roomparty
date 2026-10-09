@@ -274,7 +274,7 @@
                         {#each Object.values(view.players) as player}
                             <div class="flex items-center player-list-item">
                                 <p class="flex-1 font-medium text-white flex flex-row justify-left items-center">
-                                    <img class="buddy-img" src="images/Buddy bleu.png">
+                                    <img class="buddy-img" src="images/Buddy-bleu.png">
                                     {player.displayName}
                                 </p>
 
