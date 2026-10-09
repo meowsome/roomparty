@@ -154,7 +154,7 @@
                             {#if view.phase === "VOTING"}
                                 {#if view.gamePlayer.inputPhase == 0}
                                     <p>Describe the scent and rate it with the slider</p>
-                                    <div class="w-1/2 pt-5">
+                                    <div class="w-full md:w-1/2 pt-5">
                                         <textarea
                                             class="w-full resize-none rounded-lg bg-gray-700 p-3 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-yellow-500"
                                             bind:value={freeformText}
@@ -163,7 +163,7 @@
                                         ></textarea>
                                     </div>
 
-                                    <div class = "w-1/2 pt-5">
+                                    <div class = "w-full md:w-1/2 pt-5">
                                         <div class="w-full flex items-center justify-between text-sm text-gray-200">
                                             <span>Smells Horrendous</span>
                                             <span>Smells Amazing</span>
@@ -183,7 +183,7 @@
                                     })}>Next</button>
                                 {:else if view.gamePlayer.inputPhase == 1}
                                     <p>Pick the image that you think most closely represents the scent</p>
-                                    <div class="grid lg:grid-cols-4 md:grid-cols-3 gap-2 p-4">
+                                    <div class="grid lg:grid-cols-4 grid-cols-3 gap-2 p-4">
                                         {#each view.currentOptions as option}
                                             <button
                                                 class="rounded font-bold text-white" onclick={() => submitVote(option.id)}
