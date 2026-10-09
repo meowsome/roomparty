@@ -86,209 +86,213 @@
     }
 </script>
 
-<div class="w-full text-white p-2 flex flex-col items-center justify-center">
-    {#if view}
-        <header class="frutiger-card">
-            <nav>
-                <!-- Logo-->
-                <div class="header-left">
-                    <h1>room party</h1>
-                </div>
-                
-
-                {#if view.actor.type != "UNASSIGNED"}
-                    <div class="header-right pr-2">
-                        <p>{view.gamePlayer?.displayName}</p>
-                    </div>
-                    <div class="header-right">
-                        <button class="frutiger-aero-button button-red" onclick={leave}>
-                            Leave
-                        </button>
-                    </div>
-                {/if}
-            </nav>
-        </header>
-
-        <!-- Error Banner-->
-        {#if error}
-            <div class="frutiger-card frutiger-card-rounded frutiger-card-red w-full md:w-1/2 mb-3">
-                <div class="p-3 flex flex-col">
-                    <div class="flex flex-row justify-start items-center">
-                        <img style="width:3em;" src="images/error-button.svg">
-                        <strong class="font-bold">{error.code}</strong>
-                    </div>
-                    <span class="block sm:inline">{error.message}</span>
-                </div>
+{#if view}
+    <header class="frutiger-card">
+        <nav>
+            <!-- Logo-->
+            <div class="header-left">
+                <h1>room party</h1>
             </div>
-        {/if}
+            
 
-        <!-- Name + Joining -->
-        {#if view.actor.type === "UNASSIGNED"}
-            <div class="frutiger-card frutiger-card-rounded w-full md:w-1/2">
-                <div class="mx-auto flex max-w-md items-center justify-center gap-4 p-2">
-                    <input bind:value={name} 
-                    class="w-full resize-none rounded-lg bg-gray-700 p-3 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-yellow-500"
-                    placeholder="Name" />
+            {#if view.actor.type != "UNASSIGNED"}
+                <div class="header-right pr-2">
+                    <p>{view.gamePlayer?.displayName}</p>
                 </div>
-                <div class="mx-auto flex max-w-md items-center justify-center gap-4 p-2">
-                    <button class="frutiger-aero-button" onclick={becomePlayer}>
-                        Become Player
+                <div class="header-right">
+                    <button class="frutiger-aero-button button-red" onclick={leave}>
+                        Leave
                     </button>
-
-                    {#if view.host === false}
-                        <button class="frutiger-aero-button" onclick={becomeHost}>
-                            Become Host
-                        </button>
-                    {/if}
                 </div>
-            </div>
+            {/if}
+        </nav>
+    </header>
 
-        {:else}
-            <!-- User View -->
-            {#if view.actor.type === "PLAYER" && "currentOptions" in view}
-                <div class="frutiger-card frutiger-card-rounded w-full md:w-3/4">
-                    <div class="p-4">
-                        <p class="text-2xl"> Scent #{view.currentRound + 1}</p>
-                        {#if view.phase === "VOTING"}
-                            {#if view.gamePlayer.inputPhase == 0}
-                                <p>Describe the scent and rate it with the slider</p>
-                                <div class="mx-auto w-1/2 pt-5">
-                                    <textarea
-                                        class="w-full resize-none rounded-lg bg-gray-700 p-3 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-yellow-500"
-                                        bind:value={freeformText}
-                                        placeholder="Type literally anything that comes to mind"
-                                        rows="4"
-                                    ></textarea>
-                                </div>
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 p-6">
+        <div class="lg:col-span-3 text-white">
+            <!-- Error Banner-->
+            {#if error}
+                <div class="frutiger-card frutiger-card-rounded frutiger-card-red w-full md:w-1/2 mb-3">
+                    <div class="p-3 flex flex-col">
+                        <div class="flex flex-row justify-start items-center">
+                            <img style="width:3em;" src="images/error-button.svg">
+                            <strong class="font-bold">{error.code}</strong>
+                        </div>
+                        <span class="block sm:inline">{error.message}</span>
+                    </div>
+                </div>
+            {/if}
 
-                                <div class = "mx-auto w-1/2 pt-5">
-                                    <div class="w-full flex items-center justify-between text-sm text-gray-200">
-                                        <span>Smells Horrendous</span>
-                                        <span>Smells Amazing</span>
-                                    </div>
+            <!-- Name + Joining -->
+            {#if view.actor.type === "UNASSIGNED"}
+                <div class="frutiger-card frutiger-card-rounded w-full p-6">
+                    <p class="text-2xl">Join Game</p>
+                    <div class="flex max-w-md pt-4">
+                        <input bind:value={name} 
+                        class="w-full resize-none rounded-lg bg-gray-700 p-3 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-yellow-500"
+                        placeholder="Name" />
+                    </div>
+                    <div class="flex max-w-md gap-2 pt-4">
+                        <button class="frutiger-aero-button" onclick={becomePlayer}>
+                            Become Player
+                        </button>
 
-                                    <input
-                                        class="w-full accent-yellow-500 frutiger-aero-range"
-                                        type="range"
-                                        min="0"
-                                        max="100"
-                                        bind:value={smellRating}
-                                    />
-                                </div>
-
-                                <button class="frutiger-aero-button float-right" onclick={() => send({
-                                    type: "ADVANCE_INPUT_PAGE",
-                                })}>Next</button>
-                            {:else if view.gamePlayer.inputPhase == 1}
-                                <p>Pick the image that you think most closely represents the scent</p>
-                                <div class="grid grid-cols-3 gap-2 p-4">
-                                    {#each view.currentOptions as option}
-                                        <button
-                                            class="rounded font-bold text-white" onclick={() => submitVote(option.id)}
-                                        >
-                                            <img class = "p-1" src={option.imageLink} alt="" />
-                                        </button>
-                                    {/each}
-                                </div>
-                            {:else if view.gamePlayer.inputPhase == 2}
-                                Meow you submitted now plsz please wait
-                            {/if}
-                        {:else if view.phase === "RESULTS"}
-                            <p1> RESULTS PHASE </p1>
-                        {:else}
-                            <p1> WORDCLOUD </p1>
+                        {#if view.host === false}
+                            <button class="frutiger-aero-button" onclick={becomeHost}>
+                                Become Host
+                            </button>
                         {/if}
                     </div>
                 </div>
-            {/if}
 
-
-            <!-- Host View -->
-            {#if view.actor.type === "HOST" && "currentVotes" in view}
-
-                <h2>Scent {view.currentRound + 1}</h2>
-
-            
-                
-                {#if view.phase === "VOTING"}
-                    <div class="frutiger-card frutiger-card-rounded w-full md:w-3/4">
-                        <div class="grid grid-cols-6 gap-2 p-4">
-                            {#each view.currentOptions as option}
-                                <div class="overflow-hidden rounded-xl border border-gray-700 bg-gray-800">
-
-                                    <!-- Image -->
-                                    <img
-                                        class="block w-full p-2"
-                                        src={option.imageLink}
-                                        alt=""
-                                    />
-
-                                    <!-- Voters -->
-                                    <div class="px-3 py-2">
-                                        {#each Object.entries(view.currentVotes) as [playerId, vote]}
-                                            {#if vote.optionId === option.id}
-                                                <div class="text-sm font-medium text-white">
-                                                    {view.players[playerId]?.displayName}
-                                                </div>
-                                            {/if}
-                                        {/each}
+            {:else}
+                <!-- User View -->
+                {#if view.actor.type === "PLAYER" && "currentOptions" in view}
+                    <div class="frutiger-card frutiger-card-rounded w-full">
+                        <div class="flex flex-col justify-center p-4">
+                            <p class="text-2xl"> Scent #{view.currentRound + 1}</p>
+                            {#if view.phase === "VOTING"}
+                                {#if view.gamePlayer.inputPhase == 0}
+                                    <p>Describe the scent and rate it with the slider</p>
+                                    <div class="w-1/2 pt-5">
+                                        <textarea
+                                            class="w-full resize-none rounded-lg bg-gray-700 p-3 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-yellow-500"
+                                            bind:value={freeformText}
+                                            placeholder="Type literally anything that comes to mind"
+                                            rows="4"
+                                        ></textarea>
                                     </div>
 
-                                </div>
-                            {/each}
+                                    <div class = "w-1/2 pt-5">
+                                        <div class="w-full flex items-center justify-between text-sm text-gray-200">
+                                            <span>Smells Horrendous</span>
+                                            <span>Smells Amazing</span>
+                                        </div>
+
+                                        <input
+                                            class="w-full accent-yellow-500 frutiger-aero-range"
+                                            type="range"
+                                            min="0"
+                                            max="100"
+                                            bind:value={smellRating}
+                                        />
+                                    </div>
+
+                                    <button class="frutiger-aero-button ml-auto" onclick={() => send({
+                                        type: "ADVANCE_INPUT_PAGE",
+                                    })}>Next</button>
+                                {:else if view.gamePlayer.inputPhase == 1}
+                                    <p>Pick the image that you think most closely represents the scent</p>
+                                    <div class="grid lg:grid-cols-4 md:grid-cols-3 gap-2 p-4">
+                                        {#each view.currentOptions as option}
+                                            <button
+                                                class="rounded font-bold text-white" onclick={() => submitVote(option.id)}
+                                            >
+                                                <img class = "p-1" src={option.imageLink} alt="" />
+                                            </button>
+                                        {/each}
+                                    </div>
+                                {:else if view.gamePlayer.inputPhase == 2}
+                                    Meow you submitted now plsz please wait
+                                {/if}
+                            {:else if view.phase === "RESULTS"}
+                                <p1> RESULTS PHASE </p1>
+                            {:else}
+                                <p1> WORDCLOUD </p1>
+                            {/if}
                         </div>
-                    </div>
-                {:else if view.phase === "RESULTS"}
-                    <p1> RESULTS PHASE </p1>
-                {:else}
-                    <div class="frutiger-card frutiger-card-rounded w-full md:w-3/4">
-                        <WordCloud
-                        words={countWords(
-                            Object.values(view.currentVotes)
-                                .map(vote => vote.freeformText)
-                                .filter(text => text.trim().length > 0)
-                            )}
-                        />
                     </div>
                 {/if}
 
-                <button class="frutiger-aero-button" onclick={() => send({ type: "ADVANCE_GAME" })}>
-                    Advance
-                </button>
+
+                <!-- Host View -->
+                {#if view.actor.type === "HOST" && "currentVotes" in view}
+
+                    <h2>Scent {view.currentRound + 1}</h2>
+
+                
+                    
+                    {#if view.phase === "VOTING"}
+                        <div class="frutiger-card frutiger-card-rounded w-full">
+                            <div class="grid grid-cols-6 gap-2 p-4">
+                                {#each view.currentOptions as option}
+                                    <div class="overflow-hidden rounded-xl border border-gray-700 bg-gray-800">
+
+                                        <!-- Image -->
+                                        <img
+                                            class="block w-full p-2"
+                                            src={option.imageLink}
+                                            alt=""
+                                        />
+
+                                        <!-- Voters -->
+                                        <div class="px-3 py-2">
+                                            {#each Object.entries(view.currentVotes) as [playerId, vote]}
+                                                {#if vote.optionId === option.id}
+                                                    <div class="text-sm font-medium text-white">
+                                                        {view.players[playerId]?.displayName}
+                                                    </div>
+                                                {/if}
+                                            {/each}
+                                        </div>
+
+                                    </div>
+                                {/each}
+                            </div>
+                        </div>
+                    {:else if view.phase === "RESULTS"}
+                        <p1> RESULTS PHASE </p1>
+                    {:else}
+                        <div class="frutiger-card frutiger-card-rounded w-full">
+                            <WordCloud
+                            words={countWords(
+                                Object.values(view.currentVotes)
+                                    .map(vote => vote.freeformText)
+                                    .filter(text => text.trim().length > 0)
+                                )}
+                            />
+                        </div>
+                    {/if}
+
+                    <button class="frutiger-aero-button" onclick={() => send({ type: "ADVANCE_GAME" })}>
+                        Advance
+                    </button>
+
+                {/if}
 
             {/if}
-
-        {/if}
-
+        </div>
 
         <!-- Players List -->
-        <div class="frutiger-card frutiger-card-rounded w-1/4 mt-5">
-            <div class="p-3">
-                <h2>players</h2>
+        <div class="flex flex-col items-center justify-left">
+            <div class="frutiger-card frutiger-card-rounded w-full">
+                <div class="p-3">
+                    <h2>players</h2>
 
-                <div class="space-y-2">
-                    {#each Object.values(view.players) as player}
-                        <div class="flex items-center player-list-item">
-                            <p class="flex-1 font-medium text-white flex flex-row justify-left items-center">
-                                <img class="buddy-img" src="images/Buddy bleu.png">
-                                {player.displayName}
-                            </p>
+                    <div class="space-y-2">
+                        {#each Object.values(view.players) as player}
+                            <div class="flex items-center player-list-item">
+                                <p class="flex-1 font-medium text-white flex flex-row justify-left items-center">
+                                    <img class="buddy-img" src="images/Buddy bleu.png">
+                                    {player.displayName}
+                                </p>
 
-                            {#if view.actor.type === "HOST"}
-                                <button
-                                    class="frutiger-aero-button button-red"
-                                    onclick={() => send({
-                                        type: "DESTROY_PLAYER",
-                                        playerId: getPlayerId(player.displayName)
-                                    })}
-                                >
-                                    Kick
-                                </button>
-                            {/if}
-                        </div>
-                    {/each}
+                                {#if view.actor.type === "HOST"}
+                                    <button
+                                        class="frutiger-aero-button button-red"
+                                        onclick={() => send({
+                                            type: "DESTROY_PLAYER",
+                                            playerId: getPlayerId(player.displayName)
+                                        })}
+                                    >
+                                        Kick
+                                    </button>
+                                {/if}
+                            </div>
+                        {/each}
+                    </div>
                 </div>
             </div>
         </div>
-    {/if}
-</div>
+    </div>
+{/if}

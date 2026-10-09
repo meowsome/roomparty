@@ -4,6 +4,7 @@
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Neuropol X Free', sans-serif;
+  color: white;
 }
 
 body {
@@ -234,10 +235,6 @@ input[type="range"].frutiger-aero-range::-moz-range-thumb {
   background-repeat: no-repeat;
   border: none;
   background-color: transparent;
-}
-
-.float-right {
-    float: right;
 }
 
 .buddy-img {
