@@ -86,7 +86,7 @@
     }
 </script>
 
-<div class="w-full min-h-screen text-white p-2 flex flex-col items-center justify-center">
+<div class="w-full text-white p-2 flex flex-col items-center justify-center">
     {#if view}
         <header class="frutiger-card">
             <nav>
