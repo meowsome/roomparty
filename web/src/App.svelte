@@ -290,6 +290,8 @@
                                     </button>
                                 {/if}
                             </div>
+                        {:else}
+                            <p class="text-white">No players</p>
                         {/each}
                     </div>
                 </div>
