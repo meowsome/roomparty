@@ -186,9 +186,6 @@
                                         <button
                                             class="rounded font-bold text-white" onclick={() => submitVote(option.id)}
                                         >
-                            <!-- <button onclick={submitVote} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Submit
-                            </button> -->
                                             <img class = "p-1" src={option.imageLink} alt="" />
                                         </button>
                                     {/each}
@@ -255,7 +252,7 @@
                     </div>
                 {/if}
 
-                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick={() => send({ type: "ADVANCE_GAME" })}>
+                <button class="frutiger-aero-button" onclick={() => send({ type: "ADVANCE_GAME" })}>
                     Advance
                 </button>
 
@@ -279,7 +276,7 @@
 
                             {#if view.actor.type === "HOST"}
                                 <button
-                                    class="rounded bg-red-400 px-3 py-1.5 text-sm font-bold text-white hover:bg-red-600"
+                                    class="frutiger-aero-button button-red"
                                     onclick={() => send({
                                         type: "DESTROY_PLAYER",
                                         playerId: getPlayerId(player.displayName)
