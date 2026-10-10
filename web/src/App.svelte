@@ -214,6 +214,9 @@
                 
                     
                     {#if view.phase === "VOTING"}
+                        <p1> VOTE ON HOW YOU THINK SCENT {view.currentRound + 1} IS </p1>
+                        
+                    {:else if view.phase === "RESULTS"}
                         <div class="frutiger-card frutiger-card-rounded w-full">
                             <div class="grid grid-cols-6 gap-2 p-4">
                                 {#each view.currentOptions as option}
@@ -241,8 +244,6 @@
                                 {/each}
                             </div>
                         </div>
-                    {:else if view.phase === "RESULTS"}
-                        <p1> RESULTS PHASE </p1>
                     {:else}
                         <div class="frutiger-card frutiger-card-rounded w-full">
                             <WordCloud
