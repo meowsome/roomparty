@@ -93,6 +93,12 @@
             <div class="header-left">
                 <h1>room party</h1>
             </div>
+
+            {#if view.actor.type === "HOST"}
+                <button class="frutiger-aero-button" onclick={() => send({ type: "ADVANCE_GAME" })}>
+                    Advance
+                </button>
+            {/if}
             
 
             {#if view.actor.type != "UNASSIGNED"}
@@ -214,35 +220,50 @@
                 
                     
                     {#if view.phase === "VOTING"}
-                        <p1> VOTE ON HOW YOU THINK SCENT {view.currentRound + 1} IS </p1>
+                        <div class="mx-auto">
+                            <p1> VOTE ON HOW YOU THINK SCENT {view.currentRound + 1} IS </p1>
+                        </div>
                         
-                        <div>
-                            <h1> Start voting !!! </h1>
-                            {#each Object.values(view.players) as player}
-                                {#if player.inputPhase === 0}
-                                    <p>{player.displayName}</p>
-                                {/if}
-                            {/each}
-                        </div>
+                        <div class="grid grid-cols-3 gap-2 p-4">
+                            <div class="frutiger-card frutiger-card-rounded">
+                                <div class="p-3">
+                                    <h2> start voting !!! </h2>
+                                    <div class="space-y-2">
+                                        {#each Object.values(view.players) as player}
+                                            {#if player.inputPhase === 0}
+                                                <p>{player.displayName}</p>
+                                            {/if}
+                                        {/each}
+                                    </div>
+                                </div>
+                            </div>
 
-                        <div>
-                            <h1> Almost done.. </h1>
-                            {#each Object.values(view.players) as player}
-                                {#if player.inputPhase === 1}
-                                    <p>{player.displayName}</p>
-                                {/if}
-                            {/each}
-                        </div>
+                            <div class="frutiger-card frutiger-card-rounded">
+                                <div class="p-3">
+                                    <h2> almost done .. </h2>
+                                    <div class="space-y-2">
+                                        {#each Object.values(view.players) as player}
+                                            {#if player.inputPhase === 1}
+                                                <p>{player.displayName}</p>
+                                            {/if}
+                                        {/each}
+                                    </div>
+                                </div>
+                            </div>
 
-                        <div>
-                            <h1> Done !!! </h1>
-                            {#each Object.values(view.players) as player}
-                                {#if player.inputPhase === 2}
-                                    <p>{player.displayName}</p>
-                                {/if}
-                            {/each}
+                            <div class="frutiger-card frutiger-card-rounded">
+                                <div class="p-3">
+                                    <h2> done !!! </h2>
+                                    <div class="space-y-2">
+                                        {#each Object.values(view.players) as player}
+                                            {#if player.inputPhase === 2}
+                                                <p>{player.displayName}</p>
+                                            {/if}
+                                        {/each}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
                         
 
                     {:else if view.phase === "RESULTS"}
@@ -284,10 +305,6 @@
                             />
                         </div>
                     {/if}
-
-                    <button class="frutiger-aero-button" onclick={() => send({ type: "ADVANCE_GAME" })}>
-                        Advance
-                    </button>
 
                 {/if}
 
