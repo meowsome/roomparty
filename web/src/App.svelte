@@ -275,27 +275,29 @@
 
                             <div class="grid grid-cols-6 gap-2 p-4">
                                 {#each view.currentOptions as option}
-                                    <div class="overflow-hidden rounded-xl border border-gray-700 bg-gray-800">
+                                    {#if Object.entries(view.currentVotes).some(([playerId, vote]) => vote.optionId == option.id)}
+                                        <div class="overflow-hidden rounded-xl border border-gray-700 bg-gray-800">
 
-                                        <!-- Image -->
-                                        <img
-                                            class="block w-full p-2"
-                                            src={option.imageLink}
-                                            alt=""
-                                        />
+                                            <!-- Image -->
+                                            <img
+                                                class="block w-full p-2"
+                                                src={option.imageLink}
+                                                alt=""
+                                            />
 
-                                        <!-- Voters -->
-                                        <div class="px-3 py-2">
-                                            {#each Object.entries(view.currentVotes) as [playerId, vote]}
-                                                {#if vote.optionId === option.id}
-                                                    <div class="text-sm font-medium text-white">
-                                                        {view.players[playerId]?.displayName}
-                                                    </div>
-                                                {/if}
-                                            {/each}
+                                            <!-- Voters -->
+                                            <div class="px-3 py-2">
+                                                {#each Object.entries(view.currentVotes) as [playerId, vote]}
+                                                    {#if vote.optionId === option.id}
+                                                        <div class="text-sm font-medium text-white">
+                                                            {view.players[playerId]?.displayName}
+                                                        </div>
+                                                    {/if}
+                                                {/each}
+                                            </div>
+
                                         </div>
-
-                                    </div>
+                                    {/if}
                                 {/each}
                             </div>
                         </div>
