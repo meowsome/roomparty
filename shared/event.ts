@@ -31,4 +31,7 @@ export type GameEvent =
     }
     | {
         type: "GAME_ADVANCED";
-    };
+    }
+    | {
+        type: "GAME_REGRESSED";
+    }

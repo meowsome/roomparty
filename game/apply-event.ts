@@ -123,7 +123,32 @@ export function applyGameEvent(
                     return assertNever(state.phase);
             }
             break;
-            
+
+        case "GAME_REGRESSED":
+            switch (state.phase) {
+                case "VOTING":
+                    nextState = {
+                        ...state,
+                        phase: "WORD_CLOUD",
+                        currentRound: state.currentRound - 1,
+                    };
+                    break;
+                case "RESULTS":
+                    nextState = {
+                        ...state,
+                        phase: "VOTING",
+                    };
+                    break;
+                case "WORD_CLOUD":
+                    nextState = {
+                        ...state,
+                        phase: "RESULTS",
+                        }
+                    break;
+                default:
+                    return assertNever(state.phase);
+            }
+            break;
 
         default:
             return assertNever(event);

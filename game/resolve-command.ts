@@ -79,6 +79,8 @@ export function resolveCommand(
             return advanceInputPage(state, actor);
         case "ADVANCE_GAME":
             return advanceGame(state, actor);
+        case "REGRESS_GAME":
+            return regressGame(state, actor);
 
         default:
             return assertNever(command);
@@ -312,6 +314,48 @@ function advanceGame(
             return assertNever(state.phase);
     }
 }
+
+function regressGame(
+    state: GameState,
+    actor: Actor,
+): CommandResult {
+
+    if (actor.type !== "HOST") {
+        return {
+            type: "ERROR",
+            error: {
+                code: "NOT_A_HOST",
+                message: "Only the host can regress the game.",
+            },
+        };
+    }
+
+    switch (state.phase) {
+        case "VOTING":
+            if (state.currentRound === 0) {
+                return {
+                    type: "ERROR",
+                    error: {
+                        code: "GAME_STARTING",
+                        message: "This is the first round.",
+                    },
+                };
+            }
+
+        case "RESULTS":
+        case "WORD_CLOUD":
+            return {
+                type: "SUCCESS",
+                events: [
+                    { type: "GAME_REGRESSED" },
+                ],
+            };
+
+        default:
+            return assertNever(state.phase);
+    }
+}
+
 
 
 function isAlphanumeric(str: string): boolean {

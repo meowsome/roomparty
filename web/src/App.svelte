@@ -95,6 +95,9 @@
             </div>
 
             {#if view.actor.type === "HOST"}
+                <button class="frutiger-aero-button" onclick={() => send({ type: "REGRESS_GAME" })}>
+                    Regress
+                </button>
                 <button class="frutiger-aero-button" onclick={() => send({ type: "ADVANCE_GAME" })}>
                     Advance
                 </button>

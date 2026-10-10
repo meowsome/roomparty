@@ -13,6 +13,7 @@ export type Command =
     | { type: "CAST_VOTE"; vote: Vote; }
     | { type: "ADVANCE_INPUT_PAGE"; }
     | { type: "ADVANCE_GAME"; }
+    | { type: "REGRESS_GAME"; }
 
 export type CommandError = {
     code: string;
