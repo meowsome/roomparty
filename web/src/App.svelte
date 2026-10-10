@@ -271,6 +271,8 @@
 
                     {:else if view.phase === "RESULTS"}
                         <div class="frutiger-card frutiger-card-rounded w-full">
+                            <p class="text-2xl p-4">Average Rating: {(Object.values(view.currentVotes).reduce((sum, currentVote) => sum + currentVote.rating, 0) / Object.values(view.currentVotes).length).toFixed(2)}</p>
+
                             <div class="grid grid-cols-6 gap-2 p-4">
                                 {#each view.currentOptions as option}
                                     <div class="overflow-hidden rounded-xl border border-gray-700 bg-gray-800">
