@@ -216,6 +216,35 @@
                     {#if view.phase === "VOTING"}
                         <p1> VOTE ON HOW YOU THINK SCENT {view.currentRound + 1} IS </p1>
                         
+                        <div>
+                            <h1> Start voting !!! </h1>
+                            {#each Object.values(view.players) as player}
+                                {#if player.inputPhase === 0}
+                                    <p>{player.displayName}</p>
+                                {/if}
+                            {/each}
+                        </div>
+
+                        <div>
+                            <h1> Almost done.. </h1>
+                            {#each Object.values(view.players) as player}
+                                {#if player.inputPhase === 1}
+                                    <p>{player.displayName}</p>
+                                {/if}
+                            {/each}
+                        </div>
+
+                        <div>
+                            <h1> Done !!! </h1>
+                            {#each Object.values(view.players) as player}
+                                {#if player.inputPhase === 2}
+                                    <p>{player.displayName}</p>
+                                {/if}
+                            {/each}
+                        </div>
+
+                        
+
                     {:else if view.phase === "RESULTS"}
                         <div class="frutiger-card frutiger-card-rounded w-full">
                             <div class="grid grid-cols-6 gap-2 p-4">
